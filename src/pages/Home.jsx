@@ -25,7 +25,7 @@ import "swiper/css";
 import SiteLayout from "../components/SiteLayout";
 import CourseCard from "../components/CourseCard";
 import { COURSES, INSTITUTIONS } from "../data/courses";
-import Login from "../components/Login";
+import { useData } from "../context/DataContext";
 
 function Counter({ to, suffix = "" }) {
   const ref = useRef(null);
@@ -60,26 +60,25 @@ function Counter({ to, suffix = "" }) {
 }
 
 export default function Home() {
-  const [showOnboarding, setShowOnboarding] =
-  useState(false);
+  const { showLoginModal, setShowLoginModal } = useData();
 
-useEffect(() => {
-  const alreadySeen =
-    localStorage.getItem("ss_onboarding");
+  useEffect(() => {
+    const alreadySeen = localStorage.getItem("ss_onboarding");
 
-  if (alreadySeen) return;
+    if (alreadySeen) return;
 
-  const timer = setTimeout(() => {
-    setShowOnboarding(true);
-  }, 4000);
+    const timer = setTimeout(() => {
+      setShowLoginModal(true);
+    }, 4000);
 
-  return () => clearTimeout(timer);
-}, []);
+    return () => clearTimeout(timer);
+  }, [setShowLoginModal]);
+
   return (
     <SiteLayout>
       <div
       className={`transition-all duration-500 ${
-        showOnboarding
+        showLoginModal
           ? "blur-md scale-[0.99] pointer-events-none"
           : ""
       }`}
@@ -443,18 +442,7 @@ useEffect(() => {
       </section>
           </div>
 
-    {showOnboarding && (
-      <Login
-        onClose={() => {
-          localStorage.setItem(
-            "ss_onboarding",
-            "true"
-          );
 
-          setShowOnboarding(false);
-        }}
-      />
-    )}
     </SiteLayout>
   );
 }

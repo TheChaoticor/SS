@@ -30,15 +30,7 @@ import {
 
 import StatCard from "../components/StatCard";
 import { PageHeader, StatusBadge } from "../components/PageHeader";
-
-import {
-  stats,
-  leadAnalytics,
-  monthlyRegistrations,
-  recentLeads,
-  bookings,
-  activityFeed,
-} from "../../lib/admin-mock";
+import { useData } from "../../context/DataContext";
 
 const iconMap = {
   Users,
@@ -48,6 +40,18 @@ const iconMap = {
 };
 
 function Dashboard() {
+  const { dashboardStats, loading } = useData();
+
+  if (loading || !dashboardStats) {
+    return (
+      <div className="flex h-[400px] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  const { stats, leadAnalytics, monthlyRegistrations, recentLeads, bookings, activityFeed } = dashboardStats;
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -237,6 +241,7 @@ const activityIconMap = {
   referral: Gift,
   course: BookOpen,
   testimonial: MessageSquareQuote,
+  login: UserCheck,
 };
 
 const tooltipStyle = {

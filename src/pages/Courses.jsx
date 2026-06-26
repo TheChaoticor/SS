@@ -4,15 +4,25 @@ import { Search } from "lucide-react";
 
 import SiteLayout from "../components/SiteLayout";
 import CourseCard from "../components/CourseCard";
-import { COURSES, CATEGORIES, MODES } from "../data/courses";
+import { useData } from "../context/DataContext";
+import { MODES } from "../data/Courses";
 
 export default function Courses() {
+  const { courses } = useData();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All");
   const [mode, setMode] = useState("All");
 
+  const publishedCourses = useMemo(() => {
+    return courses.filter(c => c.status === "Published");
+  }, [courses]);
+
+  const categories = useMemo(() => {
+    return [...new Set(publishedCourses.map((c) => c.category))];
+  }, [publishedCourses]);
+
   const filtered = useMemo(() => {
-    return COURSES.filter((course) => {
+    return publishedCourses.filter((course) => {
       const matchQ =
         !q ||
         (
@@ -31,7 +41,7 @@ export default function Courses() {
 
       return matchQ && matchCat && matchMode;
     });
-  }, [q, cat, mode]);
+  }, [publishedCourses, q, cat, mode]);
 
   return (
     <SiteLayout>
@@ -80,7 +90,7 @@ export default function Courses() {
                 All categories
               </option>
 
-              {CATEGORIES.map((category) => (
+              {categories.map((category) => (
                 <option
                   key={category}
                   value={category}

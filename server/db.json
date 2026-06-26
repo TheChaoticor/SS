@@ -1,0 +1,563 @@
+{
+  "courses": [
+    {
+      "id": "fullstack-web-dev",
+      "title": "Full-Stack Web Development",
+      "institution": "KIIT University",
+      "category": "Computer Science",
+      "mode": "Hybrid",
+      "duration": "6 months",
+      "fees": "3500000",
+      "budget": "Medium",
+      "level": "Intermediate",
+      "image": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80",
+      "overview": "A career-focused program covering React, Node.js, databases, and modern deployment workflows with industry mentorship.",
+      "eligibility": "12th pass or undergraduate students with basic programming familiarity.",
+      "highlights": [
+        "Live projects",
+        "Industry mentors",
+        "Placement support",
+        "Modern stack"
+      ],
+      "students": 246,
+      "instructor": "Sneha kllllll",
+      "status": "Published"
+    },
+    {
+      "id": "ai-ml-foundations",
+      "title": "AI & Machine Learning Foundations",
+      "institution": "IIT Madras",
+      "category": "Artificial Intelligence",
+      "mode": "Online",
+      "duration": "4 months",
+      "fees": "22000",
+      "budget": "Medium",
+      "level": "Beginner",
+      "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80",
+      "overview": "Build a rigorous foundation in Python, statistics, and machine learning models with hands-on labs and capstone.",
+      "eligibility": "Anyone with high-school mathematics and curiosity for AI.",
+      "highlights": [
+        "Hands-on labs",
+        "Capstone project",
+        "IIT-certified",
+        "Python first"
+      ],
+      "students": 150,
+      "instructor": "Dr. Anil Verma",
+      "status": "Published"
+    },
+    {
+      "id": "data-science-pro",
+      "title": "Data Science Professional Track",
+      "institution": "Coursera",
+      "category": "Data Science",
+      "mode": "Online",
+      "duration": "8 months",
+      "fees": "18500",
+      "budget": "Low",
+      "level": "Intermediate",
+      "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+      "overview": "End-to-end data science program covering SQL, Python, ML, and storytelling — built for working professionals.",
+      "eligibility": "Graduates from any discipline. No coding background required.",
+      "highlights": [
+        "Self-paced",
+        "Portfolio projects",
+        "Industry capstone",
+        "Global cohort"
+      ],
+      "students": 185,
+      "instructor": "Rajesh Kumar",
+      "status": "Published"
+    },
+    {
+      "id": "ux-design-systems",
+      "title": "UX & Design Systems",
+      "institution": "Udemy",
+      "category": "Design",
+      "mode": "Online",
+      "duration": "3 months",
+      "fees": "6500",
+      "budget": "Low",
+      "level": "Beginner",
+      "image": "https://images.unsplash.com/photo-1561070791-2526d30994b8?auto=format&fit=crop&w=1200&q=80",
+      "overview": "Design beautiful, accessible interfaces and ship reusable design systems with Figma and modern UX practice.",
+      "eligibility": "Open to all aspiring designers and product builders.",
+      "highlights": [
+        "Figma deep-dive",
+        "Real briefs",
+        "Portfolio reviews",
+        "Mentor feedback"
+      ],
+      "students": 96,
+      "instructor": "Ananya Roy",
+      "status": "Published"
+    },
+    {
+      "id": "cloud-devops",
+      "title": "Cloud & DevOps Engineering",
+      "institution": "Simplilearn",
+      "category": "Cloud Computing",
+      "mode": "Hybrid",
+      "duration": "5 months",
+      "fees": "42000",
+      "budget": "Premium",
+      "level": "Advanced",
+      "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80",
+      "overview": "Master AWS, Docker, Kubernetes, and CI/CD pipelines through real-world production scenarios.",
+      "eligibility": "Engineers with 1+ year of development experience.",
+      "highlights": [
+        "AWS labs",
+        "K8s deep dives",
+        "Industry cases",
+        "Career coach"
+      ],
+      "students": 110,
+      "instructor": "Rajesh Kumar",
+      "status": "Published"
+    },
+    {
+      "id": "digital-marketing",
+      "title": "Digital Marketing & Growth",
+      "institution": "Google",
+      "category": "Marketing",
+      "mode": "Online",
+      "duration": "2 months",
+      "fees": "Free",
+      "budget": "Free",
+      "level": "Beginner",
+      "image": "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?auto=format&fit=crop&w=1200&q=80",
+      "overview": "Google-certified curriculum covering SEO, performance marketing, analytics, and brand storytelling.",
+      "eligibility": "Open to everyone. No prior experience needed.",
+      "highlights": [
+        "Google certified",
+        "Real campaigns",
+        "Analytics",
+        "Free"
+      ],
+      "students": 138,
+      "instructor": "Manish Tiwari",
+      "status": "Published"
+    },
+    {
+      "id": "product-management",
+      "title": "Product Management Essentials",
+      "institution": "edX",
+      "category": "Business",
+      "mode": "Online",
+      "duration": "4 months",
+      "fees": "28000",
+      "budget": "Medium",
+      "level": "Intermediate",
+      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80",
+      "overview": "Frameworks, discovery, prioritization, and storytelling — taught with real product case studies.",
+      "eligibility": "Working professionals with 1+ year of experience.",
+      "highlights": [
+        "Case studies",
+        "Frameworks",
+        "Mentorship",
+        "Network"
+      ],
+      "students": 72,
+      "instructor": "Vikram Iyer",
+      "status": "Published"
+    },
+    {
+      "id": "nptel-electronics",
+      "title": "Electronics & Embedded Systems",
+      "institution": "NPTEL",
+      "category": "Engineering",
+      "mode": "Online",
+      "duration": "6 months",
+      "fees": "Free",
+      "budget": "Free",
+      "level": "Intermediate",
+      "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+      "overview": "Comprehensive curriculum on circuits, microcontrollers, and embedded design — by India's leading professors.",
+      "eligibility": "Engineering students or self-learners.",
+      "highlights": [
+        "NPTEL certified",
+        "Lab kits",
+        "Faculty led",
+        "Free"
+      ],
+      "students": 50,
+      "instructor": "Dr. Anil Verma",
+      "status": "Draft"
+    }
+  ],
+  "leads": [
+    {
+      "id": "LD-1008",
+      "name": "Gg",
+      "phone": "9999999999",
+      "email": "gg@gmail.com",
+      "service": "Onboarding (Student)",
+      "date": "2026-06-26",
+      "status": "New",
+      "notes": "User signed up. Goals: wowowowowoowowowowowo"
+    },
+    {
+      "id": "LD-1007",
+      "name": "kk",
+      "phone": "99999999",
+      "email": "kk@gmail.com",
+      "service": "Counselling",
+      "date": "2026-06-25",
+      "status": "New",
+      "notes": "Booked session for 2026-06-28 at 2:30 PM. kkkkkk"
+    },
+    {
+      "id": "LD-1006",
+      "name": "kk",
+      "phone": "+91 9999999999",
+      "email": "kk@gmail.com",
+      "service": "Data Science Professional Track",
+      "date": "2026-06-25",
+      "status": "Converted",
+      "notes": "Purchased course via UPI QR Code"
+    },
+    {
+      "id": "LD-1005",
+      "name": "Neha sivakar",
+      "phone": "8999999999",
+      "email": "nehasivakar@gmail.com",
+      "service": "Counselling",
+      "date": "2026-06-25",
+      "status": "Converted",
+      "notes": "Booked session for 2026-07-09 at 9:30 AM. wow"
+    },
+    {
+      "id": "LD-1000",
+      "name": "Rahul Sharma",
+      "phone": "+91 980000000",
+      "email": "rahul.sharma@gmail.com",
+      "service": "Career Guidance",
+      "date": "2026-06-25",
+      "status": "Converted",
+      "notes": "Interested via website form. Prefers callback in evening."
+    },
+    {
+      "id": "LD-1001",
+      "name": "Priya Das",
+      "phone": "+91 980031337",
+      "email": "priya.das@gmail.com",
+      "service": "Job Support",
+      "date": "2026-06-24",
+      "status": "Closed",
+      "notes": "Interested via website form. Prefers callback in evening."
+    },
+    {
+      "id": "LD-1002",
+      "name": "Aman Singh",
+      "phone": "+91 980062674",
+      "email": "aman.singh@gmail.com",
+      "service": "Academic Support",
+      "date": "2026-06-23",
+      "status": "Converted",
+      "notes": "Interested via website form. Prefers callback in evening."
+    },
+    {
+      "id": "LD-1003",
+      "name": "Neha Patel",
+      "phone": "+91 980094011",
+      "email": "neha.patel@gmail.com",
+      "service": "Counselling",
+      "date": "2026-06-22",
+      "status": "Closed",
+      "notes": "Interested via website form. Prefers callback in evening."
+    },
+    {
+      "id": "LD-1004",
+      "name": "Rohan Verma",
+      "phone": "+91 980125348",
+      "email": "rohan.verma@gmail.com",
+      "service": "Refer & Earn",
+      "date": "2026-06-21",
+      "status": "New",
+      "notes": "Interested via website form. Prefers callback in evening."
+    }
+  ],
+  "bookings": [
+    {
+      "id": "BK-2004",
+      "student": "kk",
+      "phone": "99999999",
+      "date": "2026-06-28",
+      "time": "2:30 PM",
+      "counsellor": "Dr. Anil Verma",
+      "status": "Pending",
+      "notes": "kkkkkk"
+    },
+    {
+      "id": "BK-2003",
+      "student": "Neha sivakar",
+      "phone": "8999999999",
+      "date": "2026-07-09",
+      "time": "9:30 AM",
+      "counsellor": "Dr. Anil Verma",
+      "status": "Completed",
+      "notes": "wow"
+    },
+    {
+      "id": "BK-2000",
+      "student": "Rahul Sharma",
+      "phone": "+91 987654321",
+      "date": "2026-06-26",
+      "time": "10:00 AM",
+      "counsellor": "Dr. Anil Verma",
+      "status": "Confirmed",
+      "notes": "Interested in switching careers to Full Stack Web Development."
+    },
+    {
+      "id": "BK-2001",
+      "student": "Priya Das",
+      "phone": "+91 987654322",
+      "date": "2026-06-27",
+      "time": "11:30 AM",
+      "counsellor": "Ms. Priya Shah",
+      "status": "Confirmed",
+      "notes": "Academic support guidance required."
+    },
+    {
+      "id": "BK-2002",
+      "student": "Aman Singh",
+      "phone": "+91 987654323",
+      "date": "2026-06-28",
+      "time": "01:00 PM",
+      "counsellor": "Mr. Rohan Das",
+      "status": "Completed",
+      "notes": "Needs counselling for mental wellness."
+    }
+  ],
+  "users": [
+    {
+      "id": "US-admin",
+      "role": "Admin",
+      "email": "admin@sspathways.com",
+      "phone": "9999999999",
+      "goals": "Manage the platform",
+      "created_at": "2026-06-27",
+      "password": "admin123"
+    },
+    {
+      "id": "US-3000",
+      "role": "Student",
+      "email": "rahul.sharma@gmail.com",
+      "phone": "9800000000",
+      "goals": "Full Stack Web Development, placement support",
+      "created_at": "2026-06-25",
+      "password": "123456"
+    },
+    {
+      "id": "US-3001",
+      "role": "Working Professional",
+      "email": "priya.das@gmail.com",
+      "phone": "9800313370",
+      "goals": "Data Science Pro Track, weekend classes",
+      "created_at": "2026-06-24",
+      "password": "123456"
+    },
+    {
+      "id": "US-3002",
+      "role": "Job Seeker",
+      "email": "aman.singh@gmail.com",
+      "phone": "9800626740",
+      "goals": "Digital Marketing certification, resume reviews",
+      "created_at": "2026-06-23",
+      "password": "123456"
+    },
+    {
+      "id": "US-3004",
+      "role": "Student",
+      "email": "gg@gmail.com",
+      "phone": "9999999999",
+      "password": "gghhgh@1234",
+      "goals": "wowowowowoowowowowowo",
+      "created_at": "2026-06-26"
+    }
+  ],
+  "purchases": [
+    {
+      "id": "TX-4002",
+      "student_name": "kk",
+      "student_email": "kk@gmail.com",
+      "course_id": "data-science-pro",
+      "course_title": "Data Science Professional Track",
+      "amount": 18500,
+      "status": "Completed",
+      "upi_txn_id": "TXN490249651593",
+      "created_at": "2026-06-25"
+    },
+    {
+      "id": "TX-4000",
+      "student_name": "Rahul Sharma",
+      "student_email": "rahul.sharma@gmail.com",
+      "course_id": "fullstack-web-dev",
+      "course_title": "Full-Stack Web Development",
+      "amount": 35000,
+      "status": "Completed",
+      "upi_txn_id": "UPI82739482718",
+      "created_at": "2026-06-25"
+    },
+    {
+      "id": "TX-4001",
+      "student_name": "Priya Das",
+      "student_email": "priya.das@gmail.com",
+      "course_id": "data-science-pro",
+      "course_title": "Data Science Professional Track",
+      "amount": 18500,
+      "status": "Completed",
+      "upi_txn_id": "UPI10928301928",
+      "created_at": "2026-06-24"
+    }
+  ],
+  "services": [
+    {
+      "id": "S1",
+      "name": "Career Guidance",
+      "description": "1:1 expert-led career planning sessions tailored to student goals.",
+      "status": "Published",
+      "icon": "Compass"
+    },
+    {
+      "id": "S2",
+      "name": "Job Support",
+      "description": "Resume building, interview prep and direct hiring partner access.",
+      "status": "Published",
+      "icon": "Briefcase"
+    },
+    {
+      "id": "S3",
+      "name": "Academic Support",
+      "description": "Tutoring, doubt-solving and exam strategy across all major boards.",
+      "status": "Published",
+      "icon": "BookOpen"
+    },
+    {
+      "id": "S4",
+      "name": "Counselling",
+      "description": "Mental wellness and study-life balance with certified counsellors.",
+      "status": "Published",
+      "icon": "Heart"
+    },
+    {
+      "id": "S5",
+      "name": "Refer & Earn",
+      "description": "Refer friends and earn rewards on every successful enrollment.",
+      "status": "Unpublished",
+      "icon": "Gift"
+    }
+  ],
+  "referrals": [
+    {
+      "id": "RF-3000",
+      "referrer": "Rahul Sharma",
+      "referred": "Aarav Sharma",
+      "reward": 500,
+      "status": "Paid",
+      "date": "2026-06-25"
+    },
+    {
+      "id": "RF-3001",
+      "referrer": "Priya Das",
+      "referred": "Diya Patel",
+      "reward": 750,
+      "status": "Pending",
+      "date": "2026-06-23"
+    },
+    {
+      "id": "RF-3002",
+      "referrer": "Aman Singh",
+      "referred": "Vihaan Singh",
+      "reward": 1000,
+      "status": "Pending",
+      "date": "2026-06-21"
+    },
+    {
+      "id": "RF-3003",
+      "referrer": "Neha Patel",
+      "referred": "Anaya Reddy",
+      "reward": 500,
+      "status": "Pending",
+      "date": "2026-06-19"
+    },
+    {
+      "id": "RF-3004",
+      "referrer": "Rohan Verma",
+      "referred": "Arjun Kumar",
+      "reward": 750,
+      "status": "Paid",
+      "date": "2026-06-17"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "T1",
+      "name": "Rahul Sharma",
+      "course": "Full Stack Development",
+      "photo": "https://i.pravatar.cc/120?img=12",
+      "review": "SS Pathways transformed my career. Mentors are world-class and the placement support is outstanding.",
+      "rating": 5
+    },
+    {
+      "id": "T2",
+      "name": "Priya Das",
+      "course": "Data Science",
+      "photo": "https://i.pravatar.cc/120?img=32",
+      "review": "Got placed in 3 months as a Data Analyst. Worth every rupee.",
+      "rating": 5
+    },
+    {
+      "id": "T3",
+      "name": "Aman Singh",
+      "course": "Digital Marketing",
+      "photo": "https://i.pravatar.cc/120?img=15",
+      "review": "Practical, industry-relevant curriculum. Already running my own agency.",
+      "rating": 4
+    },
+    {
+      "id": "T4",
+      "name": "Neha Patel",
+      "course": "UI/UX Design",
+      "photo": "https://i.pravatar.cc/120?img=47",
+      "review": "The design mentorship and portfolio reviews were game-changing.",
+      "rating": 5
+    },
+    {
+      "id": "T5",
+      "name": "Rohan Verma",
+      "course": "Cloud Computing",
+      "photo": "https://i.pravatar.cc/120?img=8",
+      "review": "Cleared AWS certification on first attempt. Best decision for my upskilling journey.",
+      "rating": 5
+    },
+    {
+      "id": "T6",
+      "name": "Anika Joshi",
+      "course": "Cyber Security",
+      "photo": "https://i.pravatar.cc/120?img=44",
+      "review": "Hands-on labs and real CTF challenges built my confidence quickly.",
+      "rating": 4
+    }
+  ],
+  "settings": {
+    "company": {
+      "name": "SS Pathways",
+      "tagline": "Education For All",
+      "founded": "2024",
+      "regNo": "REG123456",
+      "description": "We help students discover the right learning path through curated, admin-approved courses tailored to their ambitions."
+    },
+    "contact": {
+      "email": "hello@ss-edu.com",
+      "phone": "+91 98765 43210",
+      "address": "Bhubaneswar, India"
+    },
+    "social": {
+      "instagram": "https://instagram.com/sspathways",
+      "linkedin": "https://linkedin.com/company/sspathways",
+      "twitter": "https://x.com/sspathways",
+      "whatsapp": "https://wa.me/919876543210"
+    }
+  }
+}

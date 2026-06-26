@@ -17,10 +17,12 @@ import {
 
 const items = [
   { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/admin/accounts", label: "User Accounts", icon: Users },
   { to: "/admin/leads", label: "Leads", icon: Users },
   { to: "/admin/courses", label: "Courses", icon: BookOpen },
-  { to: "/admin/services", label: "Services", icon: Briefcase },
   { to: "/admin/bookings", label: "Counselling Bookings", icon: CalendarCheck },
+  { to: "/admin/purchases", label: "Transactions", icon: Gift },
+  { to: "/admin/services", label: "Services", icon: Briefcase },
   { to: "/admin/referrals", label: "Referrals", icon: Gift },
   { to: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
   { to: "/admin/media", label: "Media Library", icon: Images },

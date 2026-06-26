@@ -3,9 +3,46 @@ import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
 
 import SiteLayout from "../components/SiteLayout";
+import { useData } from "../context/DataContext";
 
 export default function Contact() {
   const [sent, setSent] = useState(false);
+  const { settings, addLead } = useData();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const res = await addLead({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      service: formData.subject || "Contact Page Inquiry",
+      notes: formData.message,
+    });
+    if (res && res.success) {
+      setSent(true);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
+      setTimeout(() => setSent(false), 5000);
+    }
+  };
+
+  const contactInfo = settings?.contact || {
+    email: "hello@ss-edu.com",
+    phone: "+91 98765 43210",
+    address: "Bhubaneswar, Odisha, India"
+  };
 
   return (
     <SiteLayout>
@@ -35,17 +72,17 @@ export default function Contact() {
               {
                 Icon: Mail,
                 t: "Email",
-                d: "hello@ss-edu.com",
+                d: contactInfo.email,
               },
               {
                 Icon: Phone,
                 t: "Phone",
-                d: "+91 98765 43210",
+                d: contactInfo.phone,
               },
               {
                 Icon: MapPin,
                 t: "Address",
-                d: "Bhubaneswar, Odisha, India",
+                d: contactInfo.address,
               },
             ].map((contact, index) => (
               <motion.div
@@ -85,10 +122,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            onSubmit={(e) => {
-              e.preventDefault();
-              setSent(true);
-            }}
+            onSubmit={handleSubmit}
             className="md:col-span-3 rounded-2xl bg-card border border-border shadow-elegant p-7"
           >
             <h2 className="font-display text-2xl font-bold">
@@ -103,20 +137,35 @@ export default function Contact() {
               <Field
                 label="Your name"
                 placeholder="Ananya R."
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
 
               <Field
                 label="Email"
                 type="email"
                 placeholder="you@email.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </div>
 
-            <Field
-              className="mt-4"
-              label="Subject"
-              placeholder="How can we help?"
-            />
+            <div className="mt-4 grid sm:grid-cols-2 gap-4">
+              <Field
+                label="Phone Number"
+                type="tel"
+                placeholder="+91 9999999999"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              />
+
+              <Field
+                label="Subject"
+                placeholder="How can we help?"
+                value={formData.subject}
+                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+              />
+            </div>
 
             <div className="mt-4">
               <label className="text-sm font-medium">
@@ -127,6 +176,8 @@ export default function Contact() {
                 required
                 rows={5}
                 placeholder="Tell us a bit about what you're looking for..."
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 className="mt-1.5 w-full rounded-xl bg-secondary px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -151,6 +202,9 @@ function Field({
   type = "text",
   placeholder,
   className = "",
+  value,
+  onChange,
+  required = true,
 }) {
   return (
     <div className={className}>
@@ -159,9 +213,11 @@ function Field({
       </label>
 
       <input
-        required
+        required={required}
         type={type}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
         className="mt-1.5 w-full rounded-xl bg-secondary px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
       />
     </div>

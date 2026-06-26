@@ -1,9 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Sparkles } from "lucide-react";
 
 import SiteLayout from "../components/SiteLayout";
+import { useData } from "../context/DataContext";
+import { COURSES } from "../data/courses";
 import {
   CATEGORIES,
   MODES,
@@ -11,8 +13,38 @@ import {
   DURATIONS,
 } from "../data/courses";
 
+function getMatchingCourses(courses, stepKey, selectedValue) {
+  if (!selectedValue) return [];
+  return courses.filter((course) => {
+    if (stepKey === "interest") {
+      return course.category === selectedValue;
+    }
+    if (stepKey === "mode") {
+      return course.mode === selectedValue;
+    }
+    if (stepKey === "budget") {
+      return course.budget === selectedValue;
+    }
+    if (stepKey === "duration") {
+      const months = parseInt(course.duration);
+      if (isNaN(months)) return false;
+      if (selectedValue === "1-3 months") {
+        return months <= 3;
+      }
+      if (selectedValue === "3-6 months") {
+        return months >= 3 && months <= 6;
+      }
+      if (selectedValue === "6+ months") {
+        return months >= 6;
+      }
+    }
+    return false;
+  });
+}
+
 export default function Recommend() {
   const navigate = useNavigate();
+  const { courses } = useData() || { courses: [] };
 
   const [step, setStep] = useState(0);
 
@@ -67,6 +99,11 @@ export default function Recommend() {
       setStep((prev) => prev + 1);
     }
   };
+
+  const allCourses = (courses && courses.length > 0 ? courses : COURSES)
+    .filter(c => c.status === "Published" || !c.status);
+
+  const matchingCourses = getMatchingCourses(allCourses, current.key, value);
 
   return (
     <SiteLayout>
@@ -150,6 +187,43 @@ export default function Recommend() {
                   );
                 })}
               </div>
+
+              {/* Tag System for Matched Courses */}
+              {value && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-8 border-t border-white/10 pt-6"
+                >
+                  <div className="flex items-center gap-2 mb-4">
+                    <Sparkles className="h-4 w-4 text-orange" />
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-white/80">
+                      Courses matching "{value}" ({matchingCourses.length})
+                    </h3>
+                  </div>
+                  {matchingCourses.length > 0 ? (
+                    <div className="flex flex-wrap gap-2.5">
+                      {matchingCourses.map((c) => (
+                        <Link
+                          key={c.id}
+                          to={`/courses/${c.id}`}
+                          className="inline-flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-sm text-white/90 hover:bg-white/10 hover:border-orange transition-all duration-300 shadow-sm"
+                        >
+                          <span className="font-medium text-white/90">{c.title}</span>
+                          <span className="text-[10px] bg-orange/20 text-orange font-bold px-2 py-0.5 rounded-full">
+                            {c.duration}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-white/50">
+                      No courses match this preference yet, but continue the quiz to find the closest fits!
+                    </p>
+                  )}
+                </motion.div>
+              )}
 
               <div className="mt-10 flex items-center justify-between">
                 <button

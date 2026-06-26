@@ -6,9 +6,19 @@ import {
 } from "lucide-react";
 
 import { PageHeader, StatusBadge } from "../components/PageHeader";
-import { referrals } from "../../lib/admin-mock";
+import { useData } from "../../context/DataContext";
 
 function ReferralsPage() {
+  const { referrals, updateReferralStatus, loading } = useData();
+
+  if (loading) {
+    return (
+      <div className="flex h-[400px] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
   const total = referrals.length;
 
   const pending = referrals
@@ -114,7 +124,17 @@ function ReferralsPage() {
                   </td>
 
                   <td className="px-5 py-3">
-                    <StatusBadge status={r.status} />
+                    <select
+                      value={r.status}
+                      onChange={(e) => updateReferralStatus(r.id, e.target.value)}
+                      className={`rounded-md border bg-[#0f172a] px-2 py-1 text-xs font-semibold focus:outline-none transition-colors cursor-pointer ${
+                        r.status === "Pending" ? "border-yellow-500/30 text-yellow-400" :
+                        "border-emerald-500/30 text-emerald-400"
+                      }`}
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Paid">Paid</option>
+                    </select>
                   </td>
                 </tr>
               ))}

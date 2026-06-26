@@ -1,15 +1,21 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
+import { useData } from "../../context/DataContext";
 
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
 function AdminLayout({ children }) {
   const [open, setOpen] = useState(false);
+  const { currentUser } = useData();
 
   const location = useLocation();
   const pathname = location.pathname;
+
+  if (!currentUser || currentUser.role !== "Admin") {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="admin-theme flex min-h-screen w-full bg-background text-foreground">

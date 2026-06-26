@@ -4,19 +4,24 @@ import {
   Search, Filter, FileDown, Plus, X, Mail, Phone, Calendar, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { PageHeader, StatusBadge } from "../components/PageHeader";
-import { leads as allLeads } from "../../lib/admin-mock";
+import { useData } from "../../context/DataContext";
 
 const STATUSES = ["All", "New", "Contacted", "Converted", "Closed"];
 
 function LeadsPage() {
+  const { leads, updateLeadStatus, loading } = useData();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("All");
   const [page, setPage] = useState(1);
-  const [selected, setSelected] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const pageSize = 8;
 
+  const selected = useMemo(() => {
+    return leads.find((l) => l.id === selectedId) || null;
+  }, [leads, selectedId]);
+
   const filtered = useMemo(() => {
-    return allLeads.filter((l) => {
+    return leads.filter((l) => {
       const matchQ = !q || [l.name, l.email, l.phone, l.service].join(" ").toLowerCase().includes(q.toLowerCase());
       const matchS = status === "All" || l.status === status;
       return matchQ && matchS;
@@ -90,18 +95,37 @@ function LeadsPage() {
             </thead>
             <tbody>
               {view.map((l) => (
-                <tr key={l.id} onClick={() => setSelected(l)}
+                <tr key={l.id} onClick={() => setSelectedId(l.id)}
                   className="cursor-pointer border-t border-border transition-colors hover:bg-white/[0.03]">
                   <td className="px-5 py-3 font-medium">{l.name}</td>
                   <td className="px-5 py-3 text-muted-foreground">{l.phone}</td>
                   <td className="px-5 py-3 text-muted-foreground">{l.email}</td>
                   <td className="px-5 py-3 text-muted-foreground">{l.service}</td>
                   <td className="px-5 py-3 text-muted-foreground">{l.date}</td>
-                  <td className="px-5 py-3"><StatusBadge status={l.status} /></td>
+                  <td className="px-5 py-3" onClick={(e) => e.stopPropagation()}>
+                    <select
+                      value={l.status}
+                      onChange={(e) => updateLeadStatus(l.id, e.target.value)}
+                      className={`rounded-md border bg-[#0f172a] px-2 py-1 text-xs font-semibold focus:outline-none transition-colors cursor-pointer ${
+                        l.status === "New" ? "border-blue-500/30 text-blue-400" :
+                        l.status === "Contacted" ? "border-yellow-500/30 text-yellow-400" :
+                        l.status === "Converted" ? "border-emerald-500/30 text-emerald-400" :
+                        "border-red-500/30 text-red-400"
+                      }`}
+                    >
+                      <option value="New">New</option>
+                      <option value="Contacted">Contacted</option>
+                      <option value="Converted">Converted</option>
+                      <option value="Closed">Closed</option>
+                    </select>
+                  </td>
                 </tr>
               ))}
               {view.length === 0 && (
                 <tr><td colSpan={6} className="px-5 py-10 text-center text-sm text-muted-foreground">No leads found.</td></tr>
+              )}
+              {loading && (
+                <tr><td colSpan={6} className="px-5 py-4 text-center text-sm text-primary">Syncing...</td></tr>
               )}
             </tbody>
           </table>
@@ -127,7 +151,7 @@ function LeadsPage() {
         {selected && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-            onClick={() => setSelected(null)}
+            onClick={() => setSelectedId(null)}
           >
             <motion.div
               initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
@@ -139,9 +163,25 @@ function LeadsPage() {
                 <div>
                   <div className="text-xs text-muted-foreground">{selected.id}</div>
                   <h2 className="mt-1 text-xl font-bold">{selected.name}</h2>
-                  <div className="mt-2"><StatusBadge status={selected.status} /></div>
+                  <div className="mt-2">
+                    <select
+                      value={selected.status}
+                      onChange={(e) => updateLeadStatus(selected.id, e.target.value)}
+                      className={`rounded-md border bg-[#0f172a] px-2 py-1 text-xs font-semibold focus:outline-none transition-colors cursor-pointer ${
+                        selected.status === "New" ? "border-blue-500/30 text-blue-400" :
+                        selected.status === "Contacted" ? "border-yellow-500/30 text-yellow-400" :
+                        selected.status === "Converted" ? "border-emerald-500/30 text-emerald-400" :
+                        "border-red-500/30 text-red-400"
+                      }`}
+                    >
+                      <option value="New">New</option>
+                      <option value="Contacted">Contacted</option>
+                      <option value="Converted">Converted</option>
+                      <option value="Closed">Closed</option>
+                    </select>
+                  </div>
                 </div>
-                <button onClick={() => setSelected(null)} className="rounded-md p-1.5 hover:bg-white/5">
+                <button onClick={() => setSelectedId(null)} className="rounded-md p-1.5 hover:bg-white/5">
                   <X className="h-4 w-4" />
                 </button>
               </div>
@@ -163,8 +203,18 @@ function LeadsPage() {
               </div>
 
               <div className="mt-6 flex gap-2">
-                <button className="flex-1 rounded-lg brand-gradient py-2 text-sm font-semibold text-white">Mark Contacted</button>
-                <button className="rounded-lg border border-border px-3 py-2 text-sm">Archive</button>
+                <button
+                  onClick={() => updateLeadStatus(selected.id, "Contacted")}
+                  className="flex-1 rounded-lg brand-gradient py-2 text-sm font-semibold text-white transition-all hover:scale-[1.02]"
+                >
+                  Mark Contacted
+                </button>
+                <button
+                  onClick={() => updateLeadStatus(selected.id, "Closed")}
+                  className="rounded-lg border border-border px-3 py-2 text-sm text-red-400 border-red-500/20 hover:bg-red-500/5 transition-colors"
+                >
+                  Close Lead
+                </button>
               </div>
             </motion.div>
           </motion.div>

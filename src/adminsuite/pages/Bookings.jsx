@@ -1,9 +1,19 @@
 import { motion } from "framer-motion";
 import { CalendarCheck, Clock, Plus } from "lucide-react";
 import { PageHeader, StatusBadge } from "../components/PageHeader";
-import { bookings } from "../../lib/admin-mock";
+import { useData } from "../../context/DataContext";
 
 function BookingsPage() {
+  const { bookings, updateBookingStatus, loading } = useData();
+
+  if (loading) {
+    return (
+      <div className="flex h-[400px] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
   const summary = {
     Pending: bookings.filter((b) => b.status === "Pending").length,
     Confirmed: bookings.filter((b) => b.status === "Confirmed").length,
@@ -57,7 +67,23 @@ function BookingsPage() {
                     <td className="px-5 py-3 text-muted-foreground">{b.date}</td>
                     <td className="px-5 py-3 text-muted-foreground">{b.time}</td>
                     <td className="px-5 py-3 text-muted-foreground">{b.counsellor}</td>
-                    <td className="px-5 py-3"><StatusBadge status={b.status} /></td>
+                    <td className="px-5 py-3">
+                    <select
+                      value={b.status}
+                      onChange={(e) => updateBookingStatus(b.id, e.target.value)}
+                      className={`rounded-md border bg-[#0f172a] px-2 py-1 text-xs font-semibold focus:outline-none transition-colors cursor-pointer ${
+                        b.status === "Pending" ? "border-yellow-500/30 text-yellow-400" :
+                        b.status === "Confirmed" ? "border-blue-500/30 text-blue-400" :
+                        b.status === "Completed" ? "border-emerald-500/30 text-emerald-400" :
+                        "border-red-500/30 text-red-400"
+                      }`}
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Confirmed">Confirmed</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </select>
+                  </td>
                   </tr>
                 ))}
               </tbody>

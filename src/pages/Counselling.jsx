@@ -12,6 +12,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { cn } from "../lib/utils";
 import SiteLayout from "../components/SiteLayout";
+import { useData } from "../context/DataContext";
 
 const ANIMATION_CSS = `
 @keyframes fade-in-up {
@@ -65,10 +66,20 @@ const TIME_SLOTS = [
   "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM",
 ];
 
+const indianPhoneRegex = /^(?:\+?91|0)?[6-9]\d{9}$/;
+
 const bookingSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name must be under 100 characters"),
   email: z.string().email("Please enter a valid email address"),
-  phone: z.string().min(8, "Phone number must be at least 8 digits").max(20, "Phone number is too long"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits").refine(
+    (val) => {
+      const cleanVal = val.replace(/[\s\-()]/g, "");
+      return indianPhoneRegex.test(cleanVal);
+    },
+    {
+      message: "Please enter a valid 10-digit Indian phone number (starts with 6-9, optionally with +91 or 0)",
+    }
+  ),
   date: z.date({ required_error: "Please select a date" }),
   time: z.string().min(1, "Please select a time slot"),
   notes: z.string().max(500, "Notes must be under 500 characters").optional(),
@@ -79,6 +90,7 @@ export function BookingPage() {
   const [selectedTime, setSelectedTime] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [bookingRef, setBookingRef] = useState("");
+  const { addBooking } = useData();
 
   const {
     register,
@@ -99,10 +111,11 @@ export function BookingPage() {
   const selectedDate = watch("date");
 
   const onSubmit = async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    const ref = "MH-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-    setBookingRef(ref);
-    setSubmitted(true);
+    const res = await addBooking(data);
+    if (res.success) {
+      setBookingRef(res.booking.id);
+      setSubmitted(true);
+    }
   };
 
   const handleTimeSelect = (time) => {
@@ -247,7 +260,7 @@ export function BookingPage() {
                         <Input
                           id="phone"
                           type="tel"
-                          placeholder="+1 (555) 000-0000"
+                          placeholder="+91 98765 43210"
                           className="pl-10"
                           {...register("phone")}
                         />

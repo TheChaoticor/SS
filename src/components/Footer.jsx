@@ -18,7 +18,27 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 
+import { useData } from "../context/DataContext";
+
 export default function Footer() {
+  const { settings } = useData();
+  const company = settings?.company || {
+    name: "SS",
+    tagline: "Education For All",
+    description: "We help students discover the right learning path through curated, admin-approved courses tailored to their ambitions."
+  };
+  const contact = settings?.contact || {
+    email: "hello@ss-edu.com",
+    phone: "+91 98765 43210",
+    address: "Bhubaneswar, India"
+  };
+  const social = settings?.social || {
+    instagram: "https://instagram.com/sspathways",
+    linkedin: "https://linkedin.com/company/sspathways",
+    twitter: "https://x.com/sspathways",
+    whatsapp: "https://wa.me/919876543210"
+  };
+
   return (
     <footer className="bg-[#021238] text-white">
       {/* Top Section */}
@@ -33,46 +53,50 @@ export default function Footer() {
 
             <div>
               <h2 className="text-3xl font-bold">
-                SS
+                {company.name}
               </h2>
 
               <p className="text-xs uppercase tracking-widest text-gray-400">
-                Education For All
+                {company.tagline}
               </p>
             </div>
           </div>
 
           <p className="mt-6 text-gray-300 leading-relaxed">
-            We help students discover the right learning path
-            through curated, admin-approved courses tailored
-            to their ambitions.
+            {company.description}
           </p>
 
           {/* Social Icons */}
           <div className="flex gap-4 mt-8">
             <a
-              href="#"
+              href={social.twitter || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center hover:bg-orange-500 transition"
             >
               <FaTwitter size={18} />
             </a>
 
             <a
-              href="#"
+              href={social.linkedin || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center hover:bg-orange-500 transition"
             >
               <FaLinkedinIn size={18} />
             </a>
 
             <a
-              href="#"
+              href={social.instagram || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center hover:bg-orange-500 transition"
             >
               <FaInstagram size={18} />
             </a>
 
             <a
-              href="https://wa.me/91XXXXXXXXXX?text=Hello%20SS%20Pathways,%20I%20would%20like%20to%20know%20more."
+              href={social.whatsapp || `https://wa.me/91${contact.phone.replace(/[^0-9]/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center hover:bg-orange-500 transition"
@@ -189,17 +213,17 @@ export default function Footer() {
           <ul className="space-y-5 text-gray-300">
             <li className="flex items-center gap-3">
               <Mail className="w-5 h-5 text-orange-400" />
-              hello@ss-edu.com
+              {contact.email}
             </li>
 
             <li className="flex items-center gap-3">
               <Phone className="w-5 h-5 text-orange-400" />
-              +91 98765 43210
+              {contact.phone}
             </li>
 
             <li className="flex items-center gap-3">
               <MapPin className="w-5 h-5 text-orange-400" />
-              Bhubaneswar, India
+              {contact.address}
             </li>
           </ul>
 
@@ -287,7 +311,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-3 text-sm text-gray-400">
 
           <p>
-            © {new Date().getFullYear()} SS – Education For All.
+            © {new Date().getFullYear()} {company.name} – {company.tagline}.
             All rights reserved.
           </p>
 
