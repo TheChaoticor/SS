@@ -28,6 +28,7 @@ import {
   CartesianGrid,
 } from "recharts";
 
+import { useNavigate } from "react-router-dom";
 import StatCard from "../components/StatCard";
 import { PageHeader, StatusBadge } from "../components/PageHeader";
 import { useData } from "../../context/DataContext";
@@ -41,6 +42,8 @@ const iconMap = {
 
 function Dashboard() {
   const { dashboardStats, loading } = useData();
+  const navigate = useNavigate();
+
 
   if (loading || !dashboardStats) {
     return (
@@ -137,7 +140,7 @@ function Dashboard() {
         >
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
             <h3 className="text-base font-semibold">Recent Leads</h3>
-            <button className="text-xs font-semibold text-primary hover:underline">View all</button>
+            <button onClick={() => navigate("/admin/leads")} className="text-xs font-semibold text-primary hover:underline cursor-pointer">View all</button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -209,7 +212,7 @@ function Dashboard() {
             </h3>
             <p className="text-xs text-muted-foreground">Live feed across the platform</p>
           </div>
-          <button className="text-xs font-semibold text-primary hover:underline">View all</button>
+          <button onClick={() => navigate("/admin/leads")} className="text-xs font-semibold text-primary hover:underline cursor-pointer">View all</button>
         </div>
         <ul className="space-y-3">
           {activityFeed.map((a, i) => {
