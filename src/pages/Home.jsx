@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -25,7 +25,7 @@ import "swiper/css";
 import SiteLayout from "../components/SiteLayout";
 import CourseCard from "../components/CourseCard";
 import { COURSES, INSTITUTIONS } from "../data/courses";
-import { useData } from "../context/DataContext";
+import { useAuth } from "../components/AuthContext";
 
 function Counter({ to, suffix = "" }) {
   const ref = useRef(null);
@@ -60,25 +60,28 @@ function Counter({ to, suffix = "" }) {
 }
 
 export default function Home() {
-  const { showLoginModal, setShowLoginModal } = useData();
+  const navigate = useNavigate();
+  const {
+    isLoggedIn,
+    openLogin,
+    showLogin,
+  } = useAuth();
 
   useEffect(() => {
-    const alreadySeen = localStorage.getItem("ss_onboarding");
+  if (isLoggedIn) return;
 
-    if (alreadySeen) return;
+  const timer = setTimeout(() => {
+    openLogin();
+  }, 6000);
 
-    const timer = setTimeout(() => {
-      setShowLoginModal(true);
-    }, 4000);
-
-    return () => clearTimeout(timer);
-  }, [setShowLoginModal]);
+  return () => clearTimeout(timer);
+}, [isLoggedIn, openLogin]);
 
   return (
     <SiteLayout>
       <div
       className={`transition-all duration-500 ${
-        showLoginModal
+        showLogin
           ? "blur-md scale-[0.99] pointer-events-none"
           : ""
       }`}
@@ -128,13 +131,19 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.3 }}
               className="mt-9 flex flex-wrap gap-4"
             >
-              <Link
-                to="/counselling"
+              <button
+                onClick={() => {
+                  if (isLoggedIn) {
+                    navigate("/counselling");
+                  } else {
+                    openLogin("/counselling");
+                  }
+                }}
                 className="inline-flex items-center gap-2 rounded-full bg-orange text-white px-6 py-3.5 font-semibold shadow-glow hover:scale-[1.03] transition-transform"
               >
                 Get Free Counselling
                 <ArrowRight className="h-4 w-4" />
-              </Link>
+              </button>
 
               <Link
                 to="/courses"
@@ -441,7 +450,6 @@ export default function Home() {
         </div>
       </section>
           </div>
-
 
     </SiteLayout>
   );
