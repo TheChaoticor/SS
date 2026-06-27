@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useData } from "../context/DataContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "./AuthContext";
 import {
   Menu,
   X,
   GraduationCap,
   ArrowRight,
+  CircleUserRound,
 } from "lucide-react";
 
 const links = [
@@ -24,7 +25,11 @@ export default function Navbar() {
   const location = useLocation();
   const pathname = location.pathname;
   const navigate = useNavigate();
-  const { currentUser, logout, setShowLoginModal } = useData();
+
+  const {
+    isLoggedIn,
+    openLogin,
+  } = useAuth();
 
   useEffect(() => {
     const onScroll = () => {
@@ -92,45 +97,31 @@ export default function Navbar() {
 
             {/* Right Side */}
             <div className="hidden lg:flex items-center gap-3">
-              {currentUser ? (
-                <>
-                  {currentUser.role === "Admin" && (
-                    <Link
-                      to="/admin/dashboard"
-                      className="group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2.5 font-semibold text-white hover:bg-white/20 transition-all text-sm"
-                    >
-                      Admin Suite
-                    </Link>
-                  )}
-                  <button
-                    onClick={() => {
-                      logout();
-                      navigate("/");
-                    }}
-                    className="group inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 hover:bg-white/20 px-5 py-2.5 font-semibold text-white hover:text-orange-400 transition-all text-sm cursor-pointer"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setShowLoginModal(true)}
-                    className="group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 hover:bg-white/15 px-5 py-2.5 font-semibold text-white hover:text-orange-400 transition-all text-sm cursor-pointer"
-                  >
-                    Login
-                  </button>
-                  <Link
-                    to="/recommend"
-                    className="group inline-flex items-center gap-4 rounded-full bg-gradient-to-r from-blue-700 via-blue-600 to-orange-500 px-6 py-2.5 font-semibold text-white shadow-lg transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:from-blue-600 hover:via-orange-500 hover:to-orange-600"
-                  >
-                    Explore
+              
 
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-white">
-                      <ArrowRight className="h-4 w-4" />
-                    </span>
-                  </Link>
-                </>
+              <button
+                onClick={() => {
+                  if (isLoggedIn) {
+                    navigate("/recommend");
+                  } else {
+                    openLogin("/recommend");
+                  }
+                }}
+                className="group inline-flex items-center gap-4 rounded-full bg-gradient-to-r from-blue-700 via-blue-600 to-orange-500 px-6 py-2.5 font-semibold text-white shadow-lg transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:from-blue-600 hover:via-orange-500 hover:to-orange-600"
+              >
+                Explore
+
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-white">
+                <ArrowRight className="h-4 w-4" />
+              </span>
+              </button>
+              {isLoggedIn && (
+                <Link
+                  to="/profile"
+                  className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all duration-300 hover:border-orange-400 hover:bg-orange-500"
+                >
+                  <CircleUserRound className="h-6 w-6" />
+                </Link>
               )}
             </div>
 
@@ -216,59 +207,16 @@ export default function Navbar() {
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 </Link>
+                {isLoggedIn && (
+                  <Link
+                    to="/profile"
+                    className="mt-4 flex items-center gap-3 rounded-full border border-white/20 px-6 py-3 text-white"
+                  >
+                    <CircleUserRound className="h-5 w-5" />
+                    My Profile
+                  </Link>
+                )}
               </motion.div>
-
-              {currentUser ? (
-                <>
-                  {currentUser.role === "Admin" && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 25 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.45 }}
-                    >
-                      <Link
-                        to="/admin/dashboard"
-                        onClick={() => setOpen(false)}
-                        className="text-2xl font-semibold text-orange-400"
-                      >
-                        Admin Suite
-                      </Link>
-                    </motion.div>
-                  )}
-                  <motion.div
-                    initial={{ opacity: 0, y: 25 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                  >
-                    <button
-                      onClick={() => {
-                        logout();
-                        navigate("/");
-                        setOpen(false);
-                      }}
-                      className="text-2xl font-semibold text-white/75 hover:text-white"
-                    >
-                      Logout
-                    </button>
-                  </motion.div>
-                </>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0, y: 25 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.45 }}
-                >
-                  <button
-                    onClick={() => {
-                      setShowLoginModal(true);
-                      setOpen(false);
-                    }}
-                    className="text-2xl font-semibold text-white/90 hover:text-orange-400 font-sans"
-                  >
-                    Login / Sign Up
-                  </button>
-                </motion.div>
-              )}
             </nav>
           </motion.div>
         )}
