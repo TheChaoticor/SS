@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { readDB, writeDB } from "./db.js";
+import { sendSMSOTP, verifySMSOTP } from "./sms.js";
 
 const app = express();
 const PORT = 5000;
@@ -173,6 +174,25 @@ app.patch("/api/leads/:id/status", async (req, res) => {
     }
 
     lead.status = status;
+    await writeDB(db);
+    res.json(lead);
+});
+
+// Update Lead Notes
+app.patch("/api/leads/:id/notes", async (req, res) => {
+    const db = await readDB();
+    const lead = db.leads.find(l => l.id === req.params.id);
+
+    if (!lead) {
+        return res.status(404).json({ error: "Lead not found" });
+    }
+
+    const { notes } = req.body;
+    if (notes === undefined) {
+        return res.status(400).json({ error: "Notes field is required" });
+    }
+
+    lead.notes = notes;
     await writeDB(db);
     res.json(lead);
 });
@@ -607,6 +627,39 @@ app.delete("/api/testimonials/:id", async (req, res) => {
     }
     await writeDB(db);
     res.json({ success: true, message: "Testimonial deleted successfully" });
+});
+
+// 10.5. SMS Verification API
+app.post("/api/sms/send-otp", async (req, res) => {
+    const { phone } = req.body;
+    if (!phone) {
+        return res.status(400).json({ error: "Phone number is required" });
+    }
+    try {
+        const result = await sendSMSOTP(phone);
+        res.json(result);
+    } catch (err) {
+        console.error("Error sending SMS:", err);
+        res.status(500).json({ error: "Failed to send SMS OTP" });
+    }
+});
+
+app.post("/api/sms/verify-otp", async (req, res) => {
+    const { phone, code } = req.body;
+    if (!phone || !code) {
+        return res.status(400).json({ error: "Phone number and code are required" });
+    }
+    try {
+        const result = await verifySMSOTP(phone, code);
+        if (result.success) {
+            res.json({ success: true, message: "OTP verified successfully" });
+        } else {
+            res.status(400).json({ error: result.error || "Invalid OTP code" });
+        }
+    } catch (err) {
+        console.error("Error verifying SMS:", err);
+        res.status(500).json({ error: "Failed to verify SMS OTP" });
+    }
 });
 
 // 11. Settings API

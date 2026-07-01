@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
-import { CalendarIcon, Check, Clock, Mail, Phone, User, MessageSquare, Sparkles, Heart, Shield, GraduationCap, BookOpen, Lightbulb, Pencil, Atom, Brain } from "lucide-react";
+import { CalendarIcon, Check, Clock, Mail, Phone, User, MessageSquare, Sparkles, Heart, Shield, GraduationCap, BookOpen, Lightbulb, Pencil, Atom, Brain, Lock, RefreshCw, X } from "lucide-react";
 
 import { Button } from "../components/ui/button";
 import { Calendar } from "../components/ui/calendar";
@@ -90,7 +91,16 @@ export function BookingPage() {
   const [selectedTime, setSelectedTime] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [bookingRef, setBookingRef] = useState("");
-  const { addBooking } = useData();
+  
+  // SMS OTP States
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [verifyingOTP, setVerifyingOTP] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const [pendingData, setPendingData] = useState(null);
+  const [isSendingOTP, setIsSendingOTP] = useState(false);
+
+  const { addBooking, sendSMSOTP, verifySMSOTP } = useData();
 
   const {
     register,
@@ -111,10 +121,53 @@ export function BookingPage() {
   const selectedDate = watch("date");
 
   const onSubmit = async (data) => {
-    const res = await addBooking(data);
+    setPendingData(data);
+    setIsSendingOTP(true);
+    setOtpError("");
+    const res = await sendSMSOTP(data.phone);
+    setIsSendingOTP(false);
     if (res.success) {
-      setBookingRef(res.booking.id);
-      setSubmitted(true);
+      setShowOTPModal(true);
+    } else {
+      setOtpError(res.error || "Failed to send verification code. Please try again.");
+    }
+  };
+
+  const handleVerifyAndConfirm = async () => {
+    if (!otpCode || otpCode.length !== 6) {
+      setOtpError("Please enter a valid 6-digit verification code.");
+      return;
+    }
+    setVerifyingOTP(true);
+    setOtpError("");
+    const verifyRes = await verifySMSOTP(pendingData.phone, otpCode);
+    if (verifyRes.success) {
+      const res = await addBooking(pendingData);
+      setVerifyingOTP(false);
+      if (res.success) {
+        setBookingRef(res.booking.id);
+        setSubmitted(true);
+        setShowOTPModal(false);
+        setPendingData(null);
+        setOtpCode("");
+      } else {
+        setOtpError("Booking confirmation failed. Please try again.");
+      }
+    } else {
+      setVerifyingOTP(false);
+      setOtpError(verifyRes.error || "Invalid verification code.");
+    }
+  };
+
+  const handleResendOTP = async () => {
+    setOtpError("");
+    setIsSendingOTP(true);
+    const res = await sendSMSOTP(pendingData.phone);
+    setIsSendingOTP(false);
+    if (res.success) {
+      setOtpError("Verification code resent successfully!");
+    } else {
+      setOtpError(res.error || "Failed to resend code.");
     }
   };
 
@@ -429,6 +482,94 @@ export function BookingPage() {
           </div>
         )}
       </main>
+
+      <AnimatePresence>
+        {showOTPModal && pendingData && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 backdrop-blur-md p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-[#071224] p-6 shadow-2xl"
+            >
+              <button
+                onClick={() => {
+                  setShowOTPModal(false);
+                  setPendingData(null);
+                  setOtpCode("");
+                  setOtpError("");
+                }}
+                className="absolute right-4 top-4 rounded-xl p-2 text-white/70 hover:bg-white/10 cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange/15 text-orange mb-4">
+                <Lock className="h-6 w-6" />
+              </div>
+
+              <h3 className="text-xl font-bold text-white font-display">Verify Phone Number</h3>
+              <p className="mt-2 text-sm text-white/70 leading-relaxed">
+                We've sent a 6-digit verification code to <span className="font-semibold text-orange">{pendingData.phone}</span>. Please enter it below to confirm your booking.
+              </p>
+
+              <div className="mt-6 space-y-4">
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-wider text-white/50">Verification Code</label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    placeholder="123456"
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ""))}
+                    className="mt-1.5 w-full rounded-xl border border-white/10 bg-white/5 p-4 text-center text-2xl font-bold tracking-widest text-white outline-none focus:border-orange transition-all font-mono"
+                  />
+                </div>
+
+                {otpError && (
+                  <p className={`text-sm ${otpError.includes("success") ? "text-emerald-400" : "text-red-400"}`}>
+                    {otpError}
+                  </p>
+                )}
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={handleResendOTP}
+                    disabled={isSendingOTP}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-3.5 text-sm font-semibold text-white hover:bg-white/10 active:scale-[0.98] transition-all cursor-pointer"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${isSendingOTP ? "animate-spin" : ""}`} />
+                    Resend Code
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleVerifyAndConfirm}
+                    disabled={verifyingOTP}
+                    className="flex flex-[1.5] items-center justify-center gap-2 rounded-xl bg-orange py-3.5 text-sm font-semibold text-white hover:brightness-110 active:scale-[0.98] transition-all shadow-glow cursor-pointer"
+                  >
+                    {verifyingOTP ? (
+                      <span className="flex items-center gap-2">
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        Verifying...
+                      </span>
+                    ) : (
+                      "Verify & Confirm"
+                    )}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
     </SiteLayout>
   );

@@ -81,9 +81,15 @@ async function readLocalDB() {
 }
 
 async function writeLocalDB(data) {
+  if (process.env.VERCEL) {
+    console.log("Running on Vercel: skipping local db.json write backup.");
+    return;
+  }
   await acquireLock();
   try {
     await fs.writeFile(dbPath, JSON.stringify(data, null, 2), "utf8");
+  } catch (error) {
+    console.error("Local db.json write failed:", error);
   } finally {
     releaseLock();
   }

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   Search, Filter, FileDown, Plus, X, Mail, Phone, Calendar, ChevronLeft, ChevronRight,
 } from "lucide-react";
@@ -9,16 +9,22 @@ import { useData } from "../../context/DataContext";
 const STATUSES = ["All", "New", "Contacted", "Converted", "Closed"];
 
 function LeadsPage() {
-  const { leads, updateLeadStatus, loading } = useData();
+  const { leads, updateLeadStatus, updateLeadNotes, loading } = useData();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("All");
   const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState(null);
+  const [isEditingNotes, setIsEditingNotes] = useState(false);
+  const [notesText, setNotesText] = useState("");
   const pageSize = 8;
 
   const selected = useMemo(() => {
     return leads.find((l) => l.id === selectedId) || null;
   }, [leads, selectedId]);
+
+  useEffect(() => {
+    setIsEditingNotes(false);
+  }, [selectedId]);
 
   const filtered = useMemo(() => {
     return leads.filter((l) => {
@@ -198,8 +204,51 @@ function LeadsPage() {
               </div>
 
               <div className="mt-4 rounded-lg border border-border bg-background/40 p-4">
-                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notes</div>
-                <p className="mt-1 text-sm text-muted-foreground">{selected.notes}</p>
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notes</div>
+                  {!isEditingNotes && (
+                    <button
+                      onClick={() => {
+                        setNotesText(selected.notes || "");
+                        setIsEditingNotes(true);
+                      }}
+                      className="text-xs font-semibold text-primary hover:underline cursor-pointer"
+                    >
+                      Edit
+                    </button>
+                  )}
+                </div>
+                {isEditingNotes ? (
+                  <div className="mt-2 space-y-2">
+                    <textarea
+                      value={notesText}
+                      onChange={(e) => setNotesText(e.target.value)}
+                      rows={4}
+                      className="w-full rounded-md border border-border bg-[#0f172a] p-2 text-sm text-white focus:outline-none focus:border-primary resize-none"
+                    />
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => setIsEditingNotes(false)}
+                        className="rounded bg-white/5 px-2.5 py-1 text-xs font-medium hover:bg-white/10 cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const res = await updateLeadNotes(selected.id, notesText);
+                          if (res.success) {
+                            setIsEditingNotes(false);
+                          }
+                        }}
+                        className="rounded brand-gradient px-2.5 py-1 text-xs font-medium text-white cursor-pointer"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap">{selected.notes}</p>
+                )}
               </div>
 
               <div className="mt-6 flex gap-2">

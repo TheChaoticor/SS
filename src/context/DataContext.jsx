@@ -274,6 +274,68 @@ export function DataProvider({ children }) {
     }
   };
 
+  const updateLeadNotes = async (id, notes) => {
+    try {
+      const res = await fetch(`/api/leads/${id}/notes`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notes }),
+      });
+      if (res.ok) {
+        const updatedLead = await res.json();
+        setLeads((prev) => prev.map((l) => (l.id === id ? updatedLead : l)));
+        setDashboardStats((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            recentLeads: prev.recentLeads.map((l) => (l.id === id ? updatedLead : l)),
+          };
+        });
+        return { success: true, lead: updatedLead };
+      }
+      return { success: false };
+    } catch (err) {
+      console.error("Error updating lead notes:", err);
+      return { success: false };
+    }
+  };
+
+  const sendSMSOTP = async (phone) => {
+    try {
+      const res = await fetch("/api/sms/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+      const errData = await res.json();
+      return { success: false, error: errData.error || "Failed to send OTP" };
+    } catch (err) {
+      console.error("Error sending SMS OTP:", err);
+      return { success: false, error: "Network error, please try again" };
+    }
+  };
+
+  const verifySMSOTP = async (phone, code) => {
+    try {
+      const res = await fetch("/api/sms/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, code }),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+      const errData = await res.json();
+      return { success: false, error: errData.error || "Failed to verify OTP" };
+    } catch (err) {
+      console.error("Error verifying SMS OTP:", err);
+      return { success: false, error: "Network error, please try again" };
+    }
+  };
+
   const addBooking = async (bookingData) => {
     try {
       const res = await fetch("/api/bookings", {
@@ -533,6 +595,9 @@ export function DataProvider({ children }) {
         deleteCourse,
         addLead,
         updateLeadStatus,
+        updateLeadNotes,
+        sendSMSOTP,
+        verifySMSOTP,
         addBooking,
         updateBookingStatus,
         addAccount,
