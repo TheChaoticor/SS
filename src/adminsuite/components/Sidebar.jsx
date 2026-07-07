@@ -115,7 +115,14 @@ function Sidebar({ onClose }) {
       </nav>
 
       <div className="border-t border-sidebar-border p-3">
-        <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive">
+        <button
+          onClick={() => {
+            localStorage.removeItem("ss_logged_in");
+            localStorage.removeItem("ss_user");
+            window.location.href = "/";
+          }}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+        >
           <LogOut className="h-[18px] w-[18px]" />
           Logout
         </button>

@@ -251,7 +251,7 @@ app.get("/api/accounts", async (req, res) => {
 
 app.post("/api/accounts", async (req, res) => {
     const db = await readDB();
-    const { role, email, password, phone, goals } = req.body;
+    const { role, email, password, phone, goals, name, location, avatar } = req.body;
 
     if (!email || !phone || !role) {
         return res.status(400).json({ error: "Email, phone, and role are required" });
@@ -263,9 +263,9 @@ app.post("/api/accounts", async (req, res) => {
         return res.status(200).json(existingUser); // return existing
     }
 
-    // Derive name from email
+    // Derive name from email if not provided
     const nameParts = email.split("@")[0].split(/[._+-]+/);
-    const name = nameParts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(" ");
+    const derivedName = nameParts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(" ");
 
     const newAccount = {
         id: "US-" + (3000 + db.users.length),
@@ -274,6 +274,9 @@ app.post("/api/accounts", async (req, res) => {
         phone,
         password: password || "123456",
         goals: goals || "Not specified",
+        name: name || derivedName,
+        location: location || "Bhubaneswar, India",
+        avatar: avatar || "https://i.pravatar.cc/200",
         created_at: new Date().toISOString().slice(0, 10)
     };
 
@@ -282,7 +285,7 @@ app.post("/api/accounts", async (req, res) => {
     // Also record this signup as a lead
     const newLead = {
         id: "LD-" + (1000 + db.leads.length),
-        name,
+        name: name || derivedName,
         phone,
         email,
         service: `Onboarding (${role})`,
@@ -331,6 +334,32 @@ app.post("/api/login", async (req, res) => {
     // Return user without password
     const { password: _, ...userWithoutPassword } = user;
     res.json(userWithoutPassword);
+});
+
+app.put("/api/accounts/:id", async (req, res) => {
+    const db = await readDB();
+    const index = db.users.findIndex(u => u.id === req.params.id);
+    if (index === -1) {
+        return res.status(404).json({ error: "User not found" });
+    }
+
+    const existing = db.users[index];
+    const { name, email, phone, role, goals, location, avatar, password } = req.body;
+
+    db.users[index] = {
+        ...existing,
+        name: name !== undefined ? name : existing.name,
+        email: email !== undefined ? email : existing.email,
+        phone: phone !== undefined ? phone : existing.phone,
+        role: role !== undefined ? role : existing.role,
+        goals: goals !== undefined ? goals : existing.goals,
+        location: location !== undefined ? location : existing.location,
+        avatar: avatar !== undefined ? avatar : existing.avatar,
+        password: password !== undefined ? password : existing.password
+    };
+
+    await writeDB(db);
+    res.json(db.users[index]);
 });
 
 // 5. Purchase Intentions / Transactions

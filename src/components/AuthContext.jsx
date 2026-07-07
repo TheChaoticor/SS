@@ -25,6 +25,7 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem("ss_logged_in");
+    localStorage.removeItem("ss_user");
   };
 
   return (

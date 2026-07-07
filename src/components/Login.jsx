@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useData } from "../context/DataContext";
 import {
   X,
   ArrowRight,
@@ -13,6 +15,8 @@ export default function OnboardingModal({
   onClose,
   onSuccess,
 }) {
+  const navigate = useNavigate();
+  const { addAccount } = useData();
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
 
@@ -94,21 +98,29 @@ export default function OnboardingModal({
     }
   };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (!formData.goals.trim()) {
     setError("Please tell us what you're looking for");
     return;
   }
 
-  console.log(formData);
+  setError("");
+  try {
+    const res = await addAccount(formData);
+    if (res.success) {
+      localStorage.setItem("ss_logged_in", "true");
 
-
-  localStorage.setItem("ss_logged_in", "true");
-
-  if (onSuccess) {
-    onSuccess();
-  } else if (onClose) {
-    onClose();
+      if (onSuccess) {
+        onSuccess();
+      } else if (onClose) {
+        onClose();
+      }
+    } else {
+      setError(res.error || "Failed to register. Please try again.");
+    }
+  } catch (err) {
+    console.error(err);
+    setError("Something went wrong. Please try again.");
   }
 };
 
@@ -261,6 +273,18 @@ const handleSubmit = () => {
                       </span>
                     </div>
                   </motion.button>
+                </div>
+
+                <div className="mt-6 text-center">
+                  <button
+                    onClick={() => {
+                      if (onClose) onClose();
+                      navigate("/login");
+                    }}
+                    className="text-sm font-semibold text-blue-400 hover:text-blue-300 transition"
+                  >
+                    Already have an account? Log In
+                  </button>
                 </div>
               </motion.div>
             )}

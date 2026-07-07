@@ -97,25 +97,39 @@ export default function Navbar() {
 
             {/* Right Side */}
             <div className="hidden lg:flex items-center gap-3">
-              
-
               <button
                 onClick={() => {
                   if (isLoggedIn) {
                     navigate("/recommend");
                   } else {
-                    openLogin("/recommend");
+                    navigate("/signup");
                   }
                 }}
                 className="group inline-flex items-center gap-4 rounded-full bg-gradient-to-r from-blue-700 via-blue-600 to-orange-500 px-6 py-2.5 font-semibold text-white shadow-lg transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:from-blue-600 hover:via-orange-500 hover:to-orange-600"
               >
                 Explore
 
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-white">
-                <ArrowRight className="h-4 w-4" />
-              </span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-white">
+                  <ArrowRight className="h-4 w-4" />
+                </span>
               </button>
-              {isLoggedIn && (
+
+              {!isLoggedIn ? (
+                <div className="flex items-center gap-2">
+                  <Link
+                    to="/login"
+                    className="px-5 py-2.5 rounded-full border border-white/10 text-sm font-semibold text-white transition hover:bg-white/10 hover:border-white/20"
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-600 text-sm font-semibold text-white transition hover:shadow-lg hover:shadow-orange-500/20"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              ) : (
                 <Link
                   to="/profile"
                   className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all duration-300 hover:border-orange-400 hover:bg-orange-500"
@@ -196,10 +210,11 @@ export default function Navbar() {
                 initial={{ opacity: 0, y: 25 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
+                className="flex flex-col items-center gap-3 w-full px-6"
               >
                 <Link
                   to="/recommend"
-                  className="mt-6 inline-flex items-center gap-3 rounded-full bg-white px-7 py-3 font-semibold text-slate-900"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-white px-7 py-3 font-semibold text-slate-900"
                 >
                   Get Recommendations
 
@@ -207,14 +222,30 @@ export default function Navbar() {
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 </Link>
-                {isLoggedIn && (
+                
+                {isLoggedIn ? (
                   <Link
                     to="/profile"
-                    className="mt-4 flex items-center gap-3 rounded-full border border-white/20 px-6 py-3 text-white"
+                    className="flex w-full items-center justify-center gap-3 rounded-full border border-white/20 px-6 py-3 text-white"
                   >
                     <CircleUserRound className="h-5 w-5" />
                     My Profile
                   </Link>
+                ) : (
+                  <div className="flex gap-3 w-full mt-2">
+                    <Link
+                      to="/login"
+                      className="flex-1 text-center rounded-full border border-white/20 py-3 text-white font-semibold hover:bg-white/5 transition"
+                    >
+                      Log In
+                    </Link>
+                    <Link
+                      to="/signup"
+                      className="flex-1 text-center rounded-full bg-orange-500 py-3 text-white font-semibold hover:bg-orange-600 transition"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
                 )}
               </motion.div>
             </nav>

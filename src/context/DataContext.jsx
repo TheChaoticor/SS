@@ -401,6 +401,29 @@ export function DataProvider({ children }) {
     }
   };
 
+  const updateAccount = async (id, accountData) => {
+    try {
+      const res = await fetch(`/api/accounts/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(accountData),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setAccounts((prev) => prev.map((a) => (a.id === id ? updated : a)));
+        if (currentUser && currentUser.id === id) {
+          setCurrentUser(updated);
+          localStorage.setItem("ss_user", JSON.stringify(updated));
+        }
+        return { success: true, user: updated };
+      }
+      return { success: false, error: "Failed to update account" };
+    } catch (err) {
+      console.error("Error updating account:", err);
+      return { success: false, error: err.message };
+    }
+  };
+
   const login = async (email, password) => {
     try {
       const res = await fetch("/api/login", {
@@ -601,6 +624,7 @@ export function DataProvider({ children }) {
         addBooking,
         updateBookingStatus,
         addAccount,
+        updateAccount,
         addPurchase,
         updateService,
         updateReferralStatus,

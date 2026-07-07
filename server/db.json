@@ -1,5 +1,20 @@
 {
-  "logins": [],
+  "logins": [
+    {
+      "id": "LG-1001",
+      "email": "admin@sspathways.com",
+      "name": "Admin",
+      "date": "2026-07-07",
+      "timestamp": 1783433010089
+    },
+    {
+      "id": "LG-1000",
+      "email": "admin@sspathways.com",
+      "name": "Admin",
+      "date": "2026-07-07",
+      "timestamp": 1783432299841
+    }
+  ],
   "settings": {
     "company": {
       "name": "SS Pathways",
@@ -21,6 +36,36 @@
     }
   },
   "leads": [
+    {
+      "id": "LD-1011",
+      "name": "wowowowowowjjj",
+      "phone": "+91 7777777777",
+      "email": "b.e.he.joh.on26.4@gmail.com",
+      "service": "gggggg",
+      "date": "2026-07-07",
+      "status": "New",
+      "notes": "gggggggg"
+    },
+    {
+      "id": "LD-1010",
+      "name": "B E He Joh On26 4",
+      "phone": "7777777777",
+      "email": "b.e.he.joh.on26.4@gmail.com",
+      "service": "Onboarding (Student)",
+      "date": "2026-07-07",
+      "status": "Converted",
+      "notes": "User signed up. Goals: billing | Bought Course: Product Management Essentials"
+    },
+    {
+      "id": "LD-1009",
+      "name": "Testuser",
+      "phone": "9876543210",
+      "email": "testuser@example.com",
+      "service": "Onboarding (Student)",
+      "date": "2026-07-07",
+      "status": "New",
+      "notes": "User signed up. Goals: Placement support"
+    },
     {
       "id": "LD-1007",
       "name": "kk",
@@ -168,7 +213,7 @@
       "referrer": "Rohan Verma",
       "referred": "Arjun Kumar",
       "reward": 750,
-      "status": "Paid",
+      "status": "Pending",
       "date": "2026-06-17"
     },
     {
@@ -243,6 +288,17 @@
   ],
   "purchases": [
     {
+      "id": "TX-4003",
+      "student_name": "jjjjjj",
+      "student_email": "b.e.he.joh.on26.4@gmail.com",
+      "course_id": "product-management",
+      "course_title": "Product Management Essentials",
+      "amount": 28000,
+      "status": "Completed",
+      "upi_txn_id": "upi23489087",
+      "created_at": "2026-07-07"
+    },
+    {
       "id": "TX-4000",
       "student_name": "Rahul Sharma",
       "student_email": "rahul.sharma@gmail.com",
@@ -296,8 +352,8 @@
         "Mentorship",
         "Network"
       ],
-      "students": 72,
-      "instructor": "Vikram Iyer",
+      "students": 73,
+      "instructor": "Vikram Iye",
       "status": "Published"
     },
     {
@@ -507,6 +563,30 @@
       "goals": "Manage the platform",
       "created_at": "2026-06-27",
       "password": "admin123"
+    },
+    {
+      "id": "US-3005",
+      "role": "Student",
+      "email": "testuser@example.com",
+      "phone": "9876543210",
+      "password": "testpass123",
+      "goals": "Placement support",
+      "name": "Testuser",
+      "location": "Bhubaneswar, India",
+      "avatar": "https://i.pravatar.cc/200",
+      "created_at": "2026-07-07"
+    },
+    {
+      "id": "US-3006",
+      "role": "Student",
+      "email": "b.e.he.joh.on26.4@gmail.com",
+      "phone": "7777777777",
+      "password": "llllllll",
+      "goals": "billing",
+      "name": "wow",
+      "location": "Bhubaneswar, India",
+      "avatar": "https://i.pravatar.cc/200",
+      "created_at": "2026-07-07"
     }
   ],
   "bookings": [

@@ -48,6 +48,11 @@ export default function CourseDetails() {
   };
 
   const handlePurchaseComplete = async (finalTxnId) => {
+    if (course.fees !== "Free" && course.fees !== "0" && (!finalTxnId || !finalTxnId.trim())) {
+      setModalError("Transaction ID / Reference is required to confirm payment.");
+      return;
+    }
+    setModalError("");
     setIsSubmittingPurchase(true);
     const purchaseData = {
       student_name: studentDetails.name,
@@ -55,7 +60,7 @@ export default function CourseDetails() {
       course_id: course.id,
       course_title: course.title,
       amount: course.fees === "Free" ? 0 : course.fees,
-      upi_txn_id: finalTxnId || txnId || "TXN" + Math.random().toString().slice(2, 14),
+      upi_txn_id: finalTxnId,
     };
     
     const res = await addPurchase(purchaseData);
@@ -349,9 +354,10 @@ export default function CourseDetails() {
 
                 <div className="space-y-3 pt-2 text-left">
                   <div>
-                    <label className="block text-xs font-semibold text-white/70 mb-1">Transaction ID / Ref (Optional)</label>
+                    <label className="block text-xs font-semibold text-white/70 mb-1">Transaction ID / Ref (Required)</label>
                     <input
                       type="text"
+                      required
                       value={txnId}
                       onChange={(e) => setTxnId(e.target.value)}
                       placeholder="e.g. UPI1234567890"

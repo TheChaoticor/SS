@@ -15,6 +15,8 @@ import BookingPage from "./pages/Counselling";
 import ReferAndEarn from "./pages/ReferAndEarn";
 import AcademicSupport from "./pages/AcademicSupport";
 import ProfilePage from "./pages/Profile";
+import LoginPage from "./pages/Login";
+import SignupPage from "./pages/Signup";
 
 import Dashboard from "./adminsuite/pages/Dashboard";
 import Leads from "./adminsuite/pages/Leads";
@@ -25,6 +27,8 @@ import Referrals from "./adminsuite/pages/Referrals";
 import Testimonials from "./adminsuite/pages/Testimonials";
 import MediaLibrary from "./adminsuite/pages/MediaLibrary";
 import Settings from "./adminsuite/pages/Settings";
+import Purchases from "./adminsuite/pages/Purchases";
+import Accounts from "./adminsuite/pages/Accounts";
 
 import AdminLayout from "./adminsuite/components/AdminLayout";
 
@@ -58,12 +62,32 @@ function App() {
         <Route path="/refer-earn" element={<ReferAndEarn />} />
         <Route path="/academic-support" element={<AcademicSupport />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
 
         <Route
   path="/admin/dashboard"
   element={
     <AdminLayout>
       <Dashboard />
+    </AdminLayout>
+  }
+/>
+
+<Route
+  path="/admin/purchases"
+  element={
+    <AdminLayout>
+      <Purchases />
+    </AdminLayout>
+  }
+/>
+
+<Route
+  path="/admin/accounts"
+  element={
+    <AdminLayout>
+      <Accounts />
     </AdminLayout>
   }
 />

@@ -1,4 +1,7 @@
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { useData } from "../context/DataContext";
 import SiteLayout from "../components/SiteLayout";
 
 import {
@@ -39,57 +42,6 @@ const activityIcons = {
   compass: Compass,
 };
 
-const user = {
-  name: "Abhijit Behura",
-  role: "Student",
-  email: "abhijit@example.com",
-  phone: "+91 9876543210",
-  memberSince: "2026",
-
-  goals: "Become a Quantity Surveying Engineer",
-  location: "Bhubaneswar, Odisha",
-
-  stats: {
-    courses: 24,
-    sessions: 3,
-    saved: 8,
-  },
-};
-
-const recommended = [
-  {
-    title: "Quantity Surveying",
-    provider: "SS Pathways",
-    progress: 65,
-  },
-  {
-    title: "Tendering & Billing",
-    provider: "SS Pathways",
-    progress: 35,
-  },
-];
-
-const booked = [
-  {
-    title: "Career Counselling",
-    date: "28 June 2026",
-    mentor: "SS Expert",
-  },
-];
-
-const activities = [
-  {
-    icon: "calendar",
-    label: "Booked a counselling session",
-    time: "Today",
-  },
-  {
-    icon: "book",
-    label: "Saved Quantity Surveying Course",
-    time: "Yesterday",
-  },
-];
-
 const savedCourses = [
   {
     title: "Quantity Surveying Masterclass",
@@ -99,503 +51,540 @@ const savedCourses = [
 ];
 
 function ProfilePage() {
+  const { currentUser, updateAccount, bookings, purchases } = useData();
+  const navigate = useNavigate();
+
+  // Redirect to home if not logged in
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("ss_logged_in") === "true";
+    if (!isLoggedIn) {
+      navigate("/");
+    }
+  }, [currentUser, navigate]);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: "",
+    phone: "",
+    goals: "",
+    location: "",
+    avatar: "",
+  });
+  const [editError, setEditError] = useState("");
+  const [editLoading, setEditLoading] = useState(false);
+
+  const handleStartEdit = () => {
+    setEditForm({
+      name: currentUser?.name || currentUser?.email?.split("@")[0] || "",
+      phone: currentUser?.phone || "",
+      goals: currentUser?.goals || "",
+      location: currentUser?.location || "Bhubaneswar, India",
+      avatar: currentUser?.avatar || "https://i.pravatar.cc/200",
+    });
+    setIsEditing(false);
+    setEditError("");
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    setEditError("");
+    setEditLoading(true);
+
+    if (!editForm.name.trim() || !editForm.phone.trim()) {
+      setEditError("Name and Phone are required");
+      setEditLoading(false);
+      return;
+    }
+
+    try {
+      const res = await updateAccount(currentUser.id, editForm);
+      if (res.success) {
+        setIsEditing(false);
+      } else {
+        setEditError(res.error || "Failed to update profile");
+      }
+    } catch (err) {
+      console.error(err);
+      setEditError("An error occurred while saving.");
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  if (!currentUser) {
+    return (
+      <SiteLayout>
+        <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+          <p className="text-lg">Loading profile details...</p>
+        </div>
+      </SiteLayout>
+    );
+  }
+
+  // Derive dynamic user details
+  const userDisplayName = currentUser.name || currentUser.email.split("@")[0];
+  const userRole = currentUser.role || "Student";
+  const userEmail = currentUser.email || "";
+  const userPhone = currentUser.phone || "Not provided";
+  const userLocation = currentUser.location || "Bhubaneswar, India";
+  const userGoals = currentUser.goals || "Not specified";
+  const userAvatar = currentUser.avatar || "https://i.pravatar.cc/200";
+  const memberSince = currentUser.created_at ? new Date(currentUser.created_at).getFullYear() : "2026";
+
+  // Calculate dynamic stats
+  const myPurchases = purchases.filter(p => p.student_email?.toLowerCase() === userEmail.toLowerCase());
+  const myBookings = bookings.filter(b => b.phone === userPhone || b.student?.toLowerCase() === userDisplayName.toLowerCase());
+  const exploredCount = myPurchases.length;
+  const sessionsCount = myBookings.length;
+  const savedCount = userRole === "Admin" ? 0 : 1;
+
   return (
     <SiteLayout>
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/40 to-orange-50/30">
-      {/* Ambient backdrop */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-[#2563EB]/20 blur-3xl" />
-        <div className="absolute right-0 top-1/3 h-[28rem] w-[28rem] rounded-full bg-[#F97316]/15 blur-3xl" />
-        <div className="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-indigo-300/20 blur-3xl" />
-      </div>
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/40 to-orange-50/30">
+        {/* Ambient backdrop */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-[#2563EB]/20 blur-3xl" />
+          <div className="absolute right-0 top-1/3 h-[28rem] w-[28rem] rounded-full bg-[#F97316]/15 blur-3xl" />
+          <div className="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-indigo-300/20 blur-3xl" />
+        </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
-        {/* Header */}
-        <motion.header
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:flex-wrap sm:justify-between"
-        >
-          <div className="min-w-0">
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/60 px-3 py-1 text-xs font-semibold text-[#2563EB] backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5" /> SS Pathways
+        <div className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
+          {/* Header */}
+          <motion.header
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:flex-wrap sm:justify-between"
+          >
+            <div className="min-w-0">
+              <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/60 px-3 py-1 text-xs font-semibold text-[#2563EB] backdrop-blur">
+                <Sparkles className="h-3.5 w-3.5" /> SS Pathways
+              </div>
+              <h1 className="truncate bg-gradient-to-r from-slate-900 via-[#2563EB] to-[#1d4ed8] bg-clip-text text-3xl font-black tracking-tight text-transparent sm:text-4xl lg:text-5xl">
+                My Profile
+              </h1>
+              <p className="mt-1.5 text-sm text-slate-600 sm:text-base">
+                Manage your account, personal details and learning journey.
+              </p>
             </div>
-            <h1 className="truncate bg-gradient-to-r from-slate-900 via-[#2563EB] to-[#1d4ed8] bg-clip-text text-3xl font-black tracking-tight text-transparent sm:text-4xl lg:text-5xl">
-              My Profile
-            </h1>
-            <p className="mt-1.5 text-sm text-slate-600 sm:text-base">
-              Manage your account, personal details and learning journey.
-            </p>
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <IconBtn><Bell className="h-5 w-5" /><span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#F97316] ring-2 ring-white" /></IconBtn>
-            <IconBtn><Settings className="h-5 w-5" /></IconBtn>
-          </div>
-        </motion.header>
+            <div className="flex shrink-0 items-center gap-2">
+              <IconBtn><Bell className="h-5 w-5" /><span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#F97316] ring-2 ring-white" /></IconBtn>
+              <IconBtn><Settings className="h-5 w-5" /></IconBtn>
+            </div>
+          </motion.header>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
-          {/* SIDEBAR */}
-          <aside className="space-y-6">
-            <div className="relative overflow-hidden rounded-3xl border border-white/70 bg-white/80 p-7 shadow-xl backdrop-blur-xl">
-              <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-br from-[#2563EB] via-[#3b6df0] to-[#F97316] opacity-90" />
-              <div className="relative flex flex-col items-center pt-8 text-center">
-                <div className="relative">
+          <div className="mt-8 grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
+            {/* SIDEBAR */}
+            <aside className="space-y-6">
+              <div className="relative overflow-hidden rounded-3xl border border-white/70 bg-white/80 p-7 shadow-xl backdrop-blur-xl">
+                <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-br from-[#2563EB] via-[#3b6df0] to-[#F97316] opacity-90" />
+                <div className="relative flex flex-col items-center pt-8 text-center">
+                  <div className="relative">
                     <img
-                        src="https://i.pravatar.cc/200"
-                        alt="Profile"
-                        className="h-32 w-32 rounded-full border-4 border-white object-cover shadow-xl"
+                      src={userAvatar}
+                      alt="Profile"
+                      className="h-32 w-32 rounded-full border-4 border-white object-cover shadow-xl"
                     />
 
-                    <button className="absolute bottom-1 right-1 flex h-9 w-9 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-lg">
-                        <Pencil className="h-4 w-4" />
+                    <button
+                      onClick={handleStartEdit}
+                      className="absolute bottom-1 right-1 flex h-9 w-9 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-lg transition hover:bg-blue-600"
+                    >
+                      <Pencil className="h-4 w-4" />
                     </button>
-                </div>
-                <h2 className="mt-5 text-xl font-bold text-slate-900">{user.name}</h2>
-                <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[#2563EB]/10 to-[#F97316]/10 px-3 py-1 text-xs font-semibold text-[#2563EB]">
-                  <GraduationCap className="h-3.5 w-3.5" /> {user.role}
-                </span>
-                <div className="mt-5 w-full space-y-2.5 text-left">
-                  <Detail icon={<Mail className="h-4 w-4" />} value={user.email} />
-                  <Detail icon={<Phone className="h-4 w-4" />} value={user.phone} />
-                  <Detail icon={<Calendar className="h-4 w-4" />} value={`Member since ${user.memberSince}`} />
-                </div>
+                  </div>
+                  <h2 className="mt-5 text-xl font-bold text-slate-900">{userDisplayName}</h2>
+                  <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[#2563EB]/10 to-[#F97316]/10 px-3 py-1 text-xs font-semibold text-[#2563EB]">
+                    <GraduationCap className="h-3.5 w-3.5" /> {userRole}
+                  </span>
+                  
+                  <div className="mt-5 w-full space-y-2.5 text-left">
+                    <Detail icon={<Mail className="h-4 w-4" />} value={userEmail} />
+                    <Detail icon={<Phone className="h-4 w-4" />} value={userPhone} />
+                    <Detail icon={<Calendar className="h-4 w-4" />} value={`Member since ${memberSince}`} />
+                  </div>
 
-                <div className="mt-6 grid w-full grid-cols-3 gap-2">
-                  <Stat icon={<BookOpen className="h-4 w-4" />} value={user.stats.courses} label="Explored" />
-                  <Stat icon={<MessageSquareHeart className="h-4 w-4" />} value={user.stats.sessions} label="Sessions" />
-                  <Stat icon={<Bookmark className="h-4 w-4" />} value={user.stats.saved} label="Saved" />
-                </div>
+                  <div className="mt-6 grid w-full grid-cols-3 gap-2">
+                    <Stat icon={<BookOpen className="h-4 w-4" />} value={exploredCount} label="Courses" />
+                    <Stat icon={<MessageSquareHeart className="h-4 w-4" />} value={sessionsCount} label="Sessions" />
+                    <Stat icon={<Bookmark className="h-4 w-4" />} value={savedCount} label="Saved" />
+                  </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#2563EB] via-[#3b6df0] to-[#F97316] px-5 py-3 text-sm font-semibold text-white shadow-[0_15px_30px_-10px_rgba(37,99,235,0.6)] transition hover:shadow-[0_20px_40px_-10px_rgba(249,115,22,0.5)]"
-                >
-                  <Pencil className="h-4 w-4" /> Edit Profile
-                </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleStartEdit}
+                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#2563EB] via-[#3b6df0] to-[#F97316] px-5 py-3 text-sm font-semibold text-white shadow-[0_15px_30px_-10px_rgba(37,99,235,0.6)] transition hover:shadow-[0_20px_40px_-10px_rgba(249,115,22,0.5)]"
+                  >
+                    <Pencil className="h-4 w-4" /> Edit Profile
+                  </motion.button>
+
+                  {userRole === "Admin" && (
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => navigate("/admin/dashboard")}
+                      className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-md hover:bg-indigo-700 transition"
+                    >
+                      <ShieldCheck className="h-4 w-4" /> Admin Dashboard
+                    </motion.button>
+                  )}
+                </div>
               </div>
-            </div>
-          </aside>
+            </aside>
 
-          {/* RIGHT CONTENT */}
-<main className="space-y-6">
-  {/* Personal Info */}
-  <div className="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur-xl">
+            {/* RIGHT CONTENT */}
+            <main className="space-y-6">
+              {/* Personal Info */}
+              <div className="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur-xl">
+                <div className="mb-6 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-[#2563EB]" />
+                    <h2 className="text-lg font-bold text-slate-900">
+                      Personal Information
+                    </h2>
+                  </div>
 
-    <div className="mb-6 flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <User className="h-5 w-5 text-[#2563EB]" />
-        <h2 className="text-lg font-bold text-slate-900">
-          Personal Information
-        </h2>
-      </div>
+                  <button
+                    onClick={handleStartEdit}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-[#2563EB] hover:text-[#2563EB]"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    Edit
+                  </button>
+                </div>
 
-      <button className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-[#2563EB] hover:text-[#2563EB]">
-        <Pencil className="h-3.5 w-3.5" />
-        Edit
-      </button>
-    </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Field
+                    icon={<User className="h-4 w-4" />}
+                    label="Full Name"
+                    value={userDisplayName}
+                  />
 
-    <div className="grid gap-3 sm:grid-cols-2">
-      <Field
-        icon={<User className="h-4 w-4" />}
-        label="Full Name"
-        value={user.name}
-      />
+                  <Field
+                    icon={<Mail className="h-4 w-4" />}
+                    label="Email"
+                    value={userEmail}
+                  />
 
-      <Field
-        icon={<Mail className="h-4 w-4" />}
-        label="Email"
-        value={user.email}
-      />
+                  <Field
+                    icon={<Phone className="h-4 w-4" />}
+                    label="Phone Number"
+                    value={userPhone}
+                  />
 
-      <Field
-        icon={<Phone className="h-4 w-4" />}
-        label="Phone Number"
-        value={user.phone}
-      />
+                  <Field
+                    icon={<GraduationCap className="h-4 w-4" />}
+                    label="Role"
+                    value={userRole}
+                  />
 
-      <Field
-        icon={<GraduationCap className="h-4 w-4" />}
-        label="Role"
-        value={user.role}
-      />
+                  <Field
+                    icon={<Target className="h-4 w-4" />}
+                    label="Career Goals"
+                    value={userGoals}
+                    full
+                  />
 
-      <Field
-        icon={<Target className="h-4 w-4" />}
-        label="Career Goals"
-        value={user.goals}
-        full
-      />
+                  <Field
+                    icon={<MapPin className="h-4 w-4" />}
+                    label="Location"
+                    value={userLocation}
+                  />
+                </div>
+              </div>
 
-      <Field
-        icon={<MapPin className="h-4 w-4" />}
-        label="Location"
-        value={user.location}
-      />
-    </div>
+              {/* Account Status */}
+              <div className="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur-xl">
+                <div className="mb-6 flex items-center gap-2">
+                  <ShieldCheck className="h-5 w-5 text-[#2563EB]" />
+                  <h2 className="text-lg font-bold text-slate-900">
+                    Account Status
+                  </h2>
+                </div>
 
-  </div>
+                <div className="flex flex-wrap gap-2.5">
+                  <Badge
+                    icon={<Mail className="h-3.5 w-3.5" />}
+                    label="Email Verified"
+                    tone="emerald"
+                  />
 
-            {/* Account Status */}
-<div className="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur-xl">
+                  <Badge
+                    icon={<Phone className="h-3.5 w-3.5" />}
+                    label="Phone Verified"
+                    tone="emerald"
+                  />
 
-  <div className="mb-6 flex items-center gap-2">
-    <ShieldCheck className="h-5 w-5 text-[#2563EB]" />
-    <h2 className="text-lg font-bold text-slate-900">
-      Account Status
-    </h2>
-  </div>
+                  <Badge
+                    icon={<CheckCircle2 className="h-3.5 w-3.5" />}
+                    label="Active Member"
+                    tone="blue"
+                  />
 
-  <div className="flex flex-wrap gap-2.5">
-    <Badge
-      icon={<Mail className="h-3.5 w-3.5" />}
-      label="Email Verified"
-      tone="emerald"
-    />
+                  <Badge
+                    icon={<Crown className="h-3.5 w-3.5" />}
+                    label="Premium Guidance"
+                    tone="orange"
+                  />
+                </div>
+              </div>
 
-    <Badge
-      icon={<Phone className="h-3.5 w-3.5" />}
-      label="Phone Verified"
-      tone="emerald"
-    />
+              {/* Learning Journey */}
+              <div className="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur-xl">
+                <div className="mb-6 flex items-center gap-2">
+                  <Compass className="h-5 w-5 text-[#2563EB]" />
+                  <h2 className="text-lg font-bold text-slate-900">
+                    Learning Journey
+                  </h2>
+                </div>
 
-    <Badge
-      icon={<CheckCircle2 className="h-3.5 w-3.5" />}
-      label="Active Member"
-      tone="blue"
-    />
+                <div className="grid gap-4 md:grid-cols-2">
+                  {/* Counselling Sessions */}
+                  <JourneyCard
+                    title="Counselling"
+                    subtitle={`${myBookings.length} session(s)`}
+                    hue="from-orange-500 to-rose-500"
+                    icon={<MessageSquareHeart className="h-5 w-5" />}
+                  >
+                    {myBookings.length > 0 ? (
+                      myBookings.map((b) => (
+                        <div
+                          key={b.id}
+                          className="rounded-xl border border-slate-100 bg-white/60 p-2.5"
+                        >
+                          <p className="truncate text-xs font-semibold text-slate-800">
+                            Counselling Session
+                          </p>
+                          <p className="mt-0.5 text-[11px] text-slate-500">
+                            {b.date} at {b.time}
+                          </p>
+                          <p className="text-[11px] text-[#2563EB]">
+                            Status: {b.status}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-xs text-slate-400">No counselling sessions booked.</p>
+                    )}
+                  </JourneyCard>
 
-    <Badge
-      icon={<Crown className="h-3.5 w-3.5" />}
-      label="Premium Guidance"
-      tone="orange"
-    />
-  </div>
+                  {/* Purchased Courses Progress */}
+                  <JourneyCard
+                    title="Active Courses"
+                    subtitle={`${myPurchases.length} program(s)`}
+                    hue="from-emerald-500 to-teal-600"
+                    icon={<CheckCircle2 className="h-5 w-5" />}
+                  >
+                    {myPurchases.length > 0 ? (
+                      myPurchases.map((p) => (
+                        <ProgressRow
+                          key={p.id}
+                          title={p.course_title}
+                          provider="SS Pathways"
+                          progress={100}
+                        />
+                      ))
+                    ) : (
+                      <p className="text-xs text-slate-400">No courses purchased yet.</p>
+                    )}
+                  </JourneyCard>
+                </div>
+              </div>
 
-</div>
+              {/* Saved Courses */}
+              <div className="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur-xl">
+                <div className="mb-6 flex items-center gap-2">
+                  <Bookmark className="h-5 w-5 text-[#2563EB]" />
+                  <h2 className="text-lg font-bold text-slate-900">
+                    Saved Courses
+                  </h2>
+                </div>
 
-            {/* Learning Journey */}
-<div className="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur-xl">
+                <div className="-mx-2 flex snap-x snap-mandatory gap-4 overflow-x-auto px-2 pb-2">
+                  {savedCourses.map((c, i) => (
+                    <motion.div
+                      key={c.title}
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.06 }}
+                      whileHover={{ y: -4 }}
+                      className="group w-64 shrink-0 snap-start overflow-hidden rounded-2xl border border-white/70 bg-white/80 shadow-sm transition hover:shadow-xl"
+                    >
+                      <div className={`relative h-32 bg-gradient-to-br ${c.hue}`}>
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.4),transparent_60%)]" />
+                        <Play className="absolute bottom-3 right-3 h-7 w-7 rounded-full bg-white/30 p-1.5 text-white backdrop-blur" />
+                      </div>
 
-  <div className="mb-6 flex items-center gap-2">
-    <Compass className="h-5 w-5 text-[#2563EB]" />
-    <h2 className="text-lg font-bold text-slate-900">
-      Learning Journey
-    </h2>
-  </div>
+                      <div className="p-3.5">
+                        <p className="truncate text-sm font-bold text-slate-900">
+                          {c.title}
+                        </p>
+                        <p className="text-[11px] text-slate-500">
+                          {c.provider}
+                        </p>
 
-  <div className="grid gap-4 md:grid-cols-3">
+                        <div className="mt-3 flex items-center gap-2">
+                          <button className="flex-1 rounded-lg bg-[#2563EB] py-1.5 text-xs font-semibold text-white transition hover:bg-[#1d4ed8]">
+                            Continue
+                          </button>
+                          <button className="grid h-7 w-7 place-items-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-rose-300 hover:text-rose-500">
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
 
-    <JourneyCard
-      title="Recommended"
-      subtitle={`${recommended.length} curated picks`}
-      hue="from-blue-500 to-indigo-600"
-      icon={<Sparkles className="h-5 w-5" />}
-    >
-      {recommended.slice(0, 2).map((c) => (
-        <ProgressRow
-          key={c.title}
-          title={c.title}
-          provider={c.provider}
-          progress={c.progress}
-        />
-      ))}
-    </JourneyCard>
 
-    <JourneyCard
-      title="Counselling"
-      subtitle={`${booked.length} upcoming`}
-      hue="from-orange-500 to-rose-500"
-      icon={<MessageSquareHeart className="h-5 w-5" />}
-    >
-      {booked.map((b) => (
-        <div
-          key={b.title}
-          className="rounded-xl border border-slate-100 bg-white/60 p-2.5"
-        >
-          <p className="truncate text-xs font-semibold text-slate-800">
-            {b.title}
-          </p>
 
-          <p className="mt-0.5 text-[11px] text-slate-500">
-            {b.date}
-          </p>
+              {/* Logout */}
+              <div className="rounded-3xl border border-rose-100/80 bg-gradient-to-br from-white/80 to-rose-50/60 p-6 shadow-xl backdrop-blur-xl">
+                <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0">
+                    <h3 className="text-base font-bold text-slate-900">
+                      Sign out of SS Pathways
+                    </h3>
+                    <p className="mt-1 text-xs text-slate-500">
+                      You can securely log out of your account at any time.
+                    </p>
+                  </div>
 
-          <p className="text-[11px] text-[#2563EB]">
-            with {b.mentor}
-          </p>
-        </div>
-      ))}
-    </JourneyCard>
-
-    <JourneyCard
-      title="Progress"
-      subtitle="Overall Completion"
-      hue="from-emerald-500 to-teal-600"
-      icon={<CheckCircle2 className="h-5 w-5" />}
-    >
-      <ProgressRow
-        title="Quantity Surveying"
-        provider="Track"
-        progress={64}
-      />
-
-      <ProgressRow
-        title="Career Roadmap"
-        provider="Track"
-        progress={42}
-      />
-    </JourneyCard>
-
-  </div>
-
-</div>
-
-            {/* Learning Journey */}
-<div className="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur-xl">
-
-  <div className="mb-6 flex items-center gap-2">
-    <Compass className="h-5 w-5 text-[#2563EB]" />
-    <h2 className="text-lg font-bold text-slate-900">
-      Learning Journey
-    </h2>
-  </div>
-
-  <div className="grid gap-4 md:grid-cols-3">
-
-    <JourneyCard
-      title="Recommended"
-      subtitle={`${recommended.length} curated picks`}
-      hue="from-blue-500 to-indigo-600"
-      icon={<Sparkles className="h-5 w-5" />}
-    >
-      {recommended.slice(0, 2).map((c) => (
-        <ProgressRow
-          key={c.title}
-          title={c.title}
-          provider={c.provider}
-          progress={c.progress}
-        />
-      ))}
-    </JourneyCard>
-
-    <JourneyCard
-      title="Counselling"
-      subtitle={`${booked.length} upcoming`}
-      hue="from-orange-500 to-rose-500"
-      icon={<MessageSquareHeart className="h-5 w-5" />}
-    >
-      {booked.map((b) => (
-        <div
-          key={b.title}
-          className="rounded-xl border border-slate-100 bg-white/60 p-2.5"
-        >
-          <p className="truncate text-xs font-semibold text-slate-800">
-            {b.title}
-          </p>
-
-          <p className="mt-0.5 text-[11px] text-slate-500">
-            {b.date}
-          </p>
-
-          <p className="text-[11px] text-[#2563EB]">
-            with {b.mentor}
-          </p>
-        </div>
-      ))}
-    </JourneyCard>
-
-    <JourneyCard
-      title="Progress"
-      subtitle="Overall completion"
-      hue="from-emerald-500 to-teal-600"
-      icon={<CheckCircle2 className="h-5 w-5" />}
-    >
-      <ProgressRow
-        title="Quantity Surveying"
-        provider="Track"
-        progress={64}
-      />
-
-      <ProgressRow
-        title="Career Roadmap"
-        provider="Track"
-        progress={42}
-      />
-    </JourneyCard>
-
-  </div>
-
-</div>
-
-            {/* Quick Actions */}
-<div className="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur-xl">
-
-  <div className="mb-6 flex items-center gap-2">
-    <Sparkles className="h-5 w-5 text-[#2563EB]" />
-    <h2 className="text-lg font-bold text-slate-900">
-      Quick Actions
-    </h2>
-  </div>
-
-  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-
-    <Action
-      icon={<MessageSquareHeart className="h-5 w-5" />}
-      title="Book Counselling"
-      desc="1:1 expert guidance"
-      hue="from-[#2563EB] to-indigo-600"
-    />
-
-    <Action
-      icon={<BookOpen className="h-5 w-5" />}
-      title="Explore Courses"
-      desc="Browse 500+ programs"
-      hue="from-[#F97316] to-rose-500"
-    />
-
-    <Action
-      icon={<Sparkles className="h-5 w-5" />}
-      title="Get Recommendations"
-      desc="AI-curated for you"
-      hue="from-emerald-500 to-teal-600"
-    />
-
-    <Action
-      icon={<LifeBuoy className="h-5 w-5" />}
-      title="Contact Support"
-      desc="We're here 24/7"
-      hue="from-violet-500 to-fuchsia-600"
-    />
-
-  </div>
-
-</div>
-
-            {/* Saved Courses */}
-<div className="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur-xl">
-
-  <div className="mb-6 flex items-center gap-2">
-    <Bookmark className="h-5 w-5 text-[#2563EB]" />
-    <h2 className="text-lg font-bold text-slate-900">
-      Saved Courses
-    </h2>
-  </div>
-
-  <div className="-mx-2 flex snap-x snap-mandatory gap-4 overflow-x-auto px-2 pb-2">
-    {savedCourses.map((c, i) => (
-      <motion.div
-        key={c.title}
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: i * 0.06 }}
-        whileHover={{ y: -4 }}
-        className="group w-64 shrink-0 snap-start overflow-hidden rounded-2xl border border-white/70 bg-white/80 shadow-sm transition hover:shadow-xl"
-      >
-        <div className={`relative h-32 bg-gradient-to-br ${c.hue}`}>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.4),transparent_60%)]" />
-
-          <Play className="absolute bottom-3 right-3 h-7 w-7 rounded-full bg-white/30 p-1.5 text-white backdrop-blur" />
-        </div>
-
-        <div className="p-3.5">
-          <p className="truncate text-sm font-bold text-slate-900">
-            {c.title}
-          </p>
-
-          <p className="text-[11px] text-slate-500">
-            {c.provider}
-          </p>
-
-          <div className="mt-3 flex items-center gap-2">
-            <button className="flex-1 rounded-lg bg-[#2563EB] py-1.5 text-xs font-semibold text-white transition hover:bg-[#1d4ed8]">
-              Continue
-            </button>
-
-            <button className="grid h-7 w-7 place-items-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-rose-300 hover:text-rose-500">
-              <X className="h-3.5 w-3.5" />
-            </button>
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="group inline-flex shrink-0 items-center gap-2 rounded-2xl border border-rose-200 bg-white px-5 py-2.5 text-sm font-semibold text-rose-600 shadow-sm transition hover:border-[#F97316] hover:bg-[#F97316] hover:text-white hover:shadow-lg"
+                    onClick={() => {
+                      localStorage.removeItem("ss_logged_in");
+                      localStorage.removeItem("ss_user");
+                      window.location.href = "/";
+                    }}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </motion.button>
+                </div>
+              </div>
+            </main>
           </div>
         </div>
-      </motion.div>
-    ))}
-  </div>
+      </div>
 
-</div>
+      {/* EDIT PROFILE MODAL */}
+      <AnimatePresence>
+        {isEditing && (
+          <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl"
+            >
+              <button
+                onClick={() => setIsEditing(false)}
+                className="absolute right-4 top-4 rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+              >
+                <X size={18} />
+              </button>
 
-            {/* Security */}
-<div className="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur-xl">
+              <h2 className="text-2xl font-black text-slate-900 mb-6 flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-blue-600" /> Edit Profile
+              </h2>
 
-  <div className="mb-6 flex items-center gap-2">
-    <ShieldCheck className="h-5 w-5 text-[#2563EB]" />
-    <h2 className="text-lg font-bold text-slate-900">
-      Security & Privacy
-    </h2>
-  </div>
+              <form onSubmit={handleSaveEdit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editForm.name}
+                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none focus:border-blue-600 focus:bg-white transition"
+                  />
+                </div>
 
-  <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                    Phone Number
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editForm.phone}
+                    onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none focus:border-blue-600 focus:bg-white transition"
+                  />
+                </div>
 
-    <SecBtn
-      icon={<KeyRound className="h-4 w-4" />}
-      label="Change Password"
-    />
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.location}
+                    onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none focus:border-blue-600 focus:bg-white transition"
+                  />
+                </div>
 
-    <SecBtn
-      icon={<Smartphone className="h-4 w-4" />}
-      label="Manage Login Devices"
-    />
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                    Avatar URL
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.avatar}
+                    onChange={(e) => setEditForm({ ...editForm, avatar: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none focus:border-blue-600 focus:bg-white transition"
+                  />
+                </div>
 
-    <SecBtn
-      icon={<Lock className="h-4 w-4" />}
-      label="Privacy Settings"
-    />
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                    Career Goals
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={editForm.goals}
+                    onChange={(e) => setEditForm({ ...editForm, goals: e.target.value })}
+                    className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none focus:border-blue-600 focus:bg-white transition"
+                  />
+                </div>
 
-    <SecBtn
-      icon={<BellRing className="h-4 w-4" />}
-      label="Notification Preferences"
-    />
+                {editError && (
+                  <p className="text-xs text-red-500 text-center font-semibold">{editError}</p>
+                )}
 
-  </div>
-
-</div>
-
-            {/* Logout */}
-<div className="rounded-3xl border border-rose-100/80 bg-gradient-to-br from-white/80 to-rose-50/60 p-6 shadow-xl backdrop-blur-xl">
-  <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-    <div className="min-w-0">
-      <h3 className="text-base font-bold text-slate-900">
-        Sign out of SS Pathways
-      </h3>
-
-      <p className="mt-1 text-xs text-slate-500">
-        You can securely log out of your account at any time.
-      </p>
-    </div>
-
-    <motion.button
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-      className="group inline-flex shrink-0 items-center gap-2 rounded-2xl border border-rose-200 bg-white px-5 py-2.5 text-sm font-semibold text-rose-600 shadow-sm transition hover:border-[#F97316] hover:bg-[#F97316] hover:text-white hover:shadow-lg"
-      onClick={() => {
-        localStorage.removeItem("isLoggedIn");
-        window.location.href = "/";
-      }}
-    >
-      <LogOut className="h-4 w-4" />
-      Logout
-    </motion.button>
-  </div>
-</div>
-
-</main>
-</div>
-</div>
-</div>
-</SiteLayout>
-);
+                <div className="flex gap-3 justify-end pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(false)}
+                    className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={editLoading}
+                    className="rounded-xl bg-[#2563EB] px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition disabled:opacity-50"
+                  >
+                    {editLoading ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </SiteLayout>
+  );
 }
 
 /* ---------- atoms ---------- */
@@ -631,9 +620,7 @@ function Stat({ icon, value, label }) {
   );
 }
 
-function Field({
-  icon, label, value, full,
-}) {
+function Field({ icon, label, value, full }) {
   return (
     <div className={`group rounded-2xl border border-slate-100 bg-white/70 p-3.5 transition hover:border-[#2563EB]/40 hover:shadow-sm ${full ? "sm:col-span-2" : ""}`}>
       <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
@@ -657,11 +644,9 @@ function Badge({ icon, label, tone }) {
   );
 }
 
-function JourneyCard({
-  title, subtitle, hue, icon, children,
-}) {
+function JourneyCard({ title, subtitle, hue, icon, children }) {
   return (
-    <motion.div whileHover={{ y: -4 }} className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-sm transition hover:shadow-lg">
+    <motion.div whileHover={{ y: -4 }} className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-sm transition hover:shadow-lg flex flex-col h-full">
       <div className="mb-3 flex items-center gap-3">
         <span className={`grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br ${hue} text-white shadow`}>{icon}</span>
         <div className="min-w-0">
@@ -669,7 +654,7 @@ function JourneyCard({
           <p className="text-[11px] text-slate-500">{subtitle}</p>
         </div>
       </div>
-      <div className="space-y-2.5">{children}</div>
+      <div className="space-y-2.5 flex-1 overflow-y-auto max-h-48 scrollbar-thin pr-1">{children}</div>
     </motion.div>
   );
 }
@@ -714,7 +699,7 @@ function SecBtn({ icon, label }) {
   return (
     <motion.button
       whileHover={{ x: 3 }}
-      className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-white/70 px-4 py-3 text-sm font-semibold text-slate-800 transition hover:border-[#2563EB]/40 hover:bg-white"
+      className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-white/70 px-4 py-3 text-sm font-semibold text-slate-800 transition hover:border-[#2563EB]/40 hover:bg-white w-full text-left"
     >
       <span className="flex min-w-0 items-center gap-2.5">
         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[#2563EB]/10 text-[#2563EB]">{icon}</span>
