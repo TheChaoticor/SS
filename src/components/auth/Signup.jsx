@@ -1,11 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-<<<<<<< HEAD:src/components/Login.jsx
 import { useNavigate } from "react-router-dom";
-import { useData } from "../context/DataContext";
-=======
-
->>>>>>> f72ad46b94359cfcc17c13e567c87e8cbf783a1e:src/components/auth/Signup.jsx
+import { useData } from "../../context/DataContext";
 import {
   X,
   ArrowRight,
@@ -15,24 +11,16 @@ import {
   Search,
 } from "lucide-react";
 
-<<<<<<< HEAD:src/components/Login.jsx
-export default function OnboardingModal({
-  onClose,
-  onSuccess,
-}) {
-  const navigate = useNavigate();
-  const { addAccount } = useData();
-=======
 import { useAuth } from "./AuthContext";
 
 export default function Signup() {
+  const navigate = useNavigate();
+  const { addAccount } = useData();
   const {
     login,
     openLogin,
     closeAuth,
   } = useAuth();
-
->>>>>>> f72ad46b94359cfcc17c13e567c87e8cbf783a1e:src/components/auth/Signup.jsx
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
 
@@ -109,48 +97,25 @@ export default function Signup() {
     }
   };
 
-<<<<<<< HEAD:src/components/Login.jsx
-const handleSubmit = async () => {
-  if (!formData.goals.trim()) {
-    setError("Please tell us what you're looking for");
-    return;
-  }
-
-  setError("");
-  try {
-    const res = await addAccount(formData);
-    if (res.success) {
-      localStorage.setItem("ss_logged_in", "true");
-
-      if (onSuccess) {
-        onSuccess();
-      } else if (onClose) {
-        onClose();
-      }
-    } else {
-      setError(res.error || "Failed to register. Please try again.");
-    }
-  } catch (err) {
-    console.error(err);
-    setError("Something went wrong. Please try again.");
-  }
-};
-=======
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.goals.trim()) {
       setError("Please tell us what you're looking for");
       return;
     }
 
-    console.log(formData);
-
-    login({
-      name: formData.role,
-      email: formData.email,
-      role: "user",
-    });
+    setError("");
+    try {
+      const res = await addAccount(formData);
+      if (res.success) {
+        login(res.account);
+      } else {
+        setError(res.error || "Failed to register. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Please try again.");
+    }
   };
->>>>>>> f72ad46b94359cfcc17c13e567c87e8cbf783a1e:src/components/auth/Signup.jsx
 
   const cardClass =
     "w-full cursor-pointer rounded-2xl border border-white/10 bg-white/5 p-4 transition-all hover:border-orange hover:bg-white/10";

@@ -8,13 +8,15 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "./AuthContext";
+import { useData } from "../../context/DataContext";
 
 export default function Login() {
   const {
-    login,
+    login: authLogin,
     openSignup,
     closeAuth,
   } = useAuth();
+  const { login: dataLogin } = useData();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -56,15 +58,21 @@ export default function Login() {
     return true;
   };
 
-  const handleLogin = () => {
-  if (!validateForm()) return;
-
-  login({
-    name: "Student",
-    email: formData.email,
-    role: "user",
-  });
-};
+  const handleLogin = async () => {
+    if (!validateForm()) return;
+    setError("");
+    try {
+      const res = await dataLogin(formData.email, formData.password);
+      if (res.success) {
+        authLogin(res.user);
+      } else {
+        setError(res.error || "Invalid email or password");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Please try again.");
+    }
+  };
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
       <motion.div

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useData } from "../context/DataContext";
-import { useAuth } from "../components/AuthContext";
+import { useAuth } from "../components/auth/AuthContext";
 import SiteLayout from "../components/SiteLayout";
 import {
   GraduationCap,
@@ -102,7 +102,7 @@ export default function SignupPage() {
     try {
       const res = await addAccount(formData);
       if (res.success) {
-        authLogin(); // sets logged_in in AuthContext
+        authLogin(res.account); // sets logged_in and user state in AuthContext
         navigate("/profile");
       } else {
         setError(res.error || "Failed to complete registration");

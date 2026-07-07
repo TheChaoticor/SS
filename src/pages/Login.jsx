@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useData } from "../context/DataContext";
-import { useAuth } from "../components/AuthContext";
+import { useAuth } from "../components/auth/AuthContext";
 import SiteLayout from "../components/SiteLayout";
 import { Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
 
@@ -30,7 +30,7 @@ export default function LoginPage() {
     try {
       const res = await dataLogin(email, password);
       if (res.success) {
-        authLogin(); // sets logged_in in AuthContext
+        authLogin(res.user); // sets logged_in and user state in AuthContext
         
         // If it's an admin, go to admin panel. Otherwise, go to profile page.
         if (res.user.role === "Admin") {

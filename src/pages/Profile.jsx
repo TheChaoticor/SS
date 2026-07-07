@@ -54,11 +54,14 @@ function ProfilePage() {
   const { currentUser, updateAccount, bookings, purchases } = useData();
   const navigate = useNavigate();
 
-  // Redirect to home if not logged in
+  // Redirect to login if not logged in or session is broken
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("ss_logged_in") === "true";
-    if (!isLoggedIn) {
-      navigate("/");
+    const savedUser = localStorage.getItem("ss_user");
+    if (!isLoggedIn || !savedUser) {
+      localStorage.removeItem("ss_logged_in");
+      localStorage.removeItem("ss_user");
+      navigate("/login");
     }
   }, [currentUser, navigate]);
 
