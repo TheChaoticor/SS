@@ -241,15 +241,6 @@ function Hero() {
       <Particles />
       <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-2">
         <div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs font-medium text-orange"
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            Refer & Earn Program
-          </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -334,7 +325,7 @@ function HowItWorks() {
 
   return (
     <section id="how" className="relative py-24 sm:py-32">
-      <SectionHeader eyebrow="Three simple steps" title="How It Works" subtitle="A frictionless flow designed for instant rewards and effortless sharing." />
+      <SectionHeader title="How It Works" subtitle="A frictionless flow designed for instant rewards and effortless sharing." />
       <div className="relative mx-auto mt-16 grid max-w-6xl gap-6 px-6 md:grid-cols-3">
         {steps.map((s, i) => (
           <motion.div
@@ -386,7 +377,7 @@ function RewardTiers() {
 
   return (
     <section id="rewards" className="relative py-24 sm:py-32">
-      <SectionHeader eyebrow="Reward tiers" title="Earn More With Every Referral" subtitle="The more friends you bring, the bigger the rewards. Unlock exclusive benefits as you climb." />
+      <SectionHeader title="Earn More With Every Referral" subtitle="The more friends you bring, the bigger the rewards. Unlock exclusive benefits as you climb." />
       <div className="mx-auto mt-16 grid max-w-6xl gap-6 px-6 md:grid-cols-3">
         {tiers.map((t, i) => (
           <motion.div
@@ -465,7 +456,7 @@ function WhyUs() {
 
   return (
     <section className="relative py-24 sm:py-32">
-      <SectionHeader eyebrow="Why SS Pathways" title="Why Students Trust SS Pathways" subtitle="A platform built around outcomes, mentorship, and clarity." />
+      <SectionHeader title="Why Students Trust SS Pathways" subtitle="A platform built around outcomes, mentorship, and clarity." />
       <div className="mx-auto mt-16 grid max-w-6xl gap-6 px-6 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((it, i) => (
           <motion.div
@@ -503,7 +494,7 @@ function DashboardPreview() {
 
   return (
     <section id="dashboard" className="relative py-24 sm:py-32">
-      <SectionHeader eyebrow="Your dashboard" title="Track Your Progress" subtitle="A clean, real-time view of your referrals, rewards, and activity." />
+      <SectionHeader title="Track Your Progress" subtitle="A clean, real-time view of your referrals, rewards, and activity." />
 
       <motion.div
         initial={{ opacity: 0, y: 50 }}
@@ -660,7 +651,7 @@ function Stories() {
 
   return (
     <section className="relative py-24 sm:py-32">
-      <SectionHeader eyebrow="Success stories" title="Referral Success Stories" subtitle="Real students, real rewards, real impact." />
+      <SectionHeader title="Referral Success Stories" subtitle="Real students, real rewards, real impact." />
       <div className="mx-auto mt-16 grid max-w-6xl gap-6 px-6 md:grid-cols-3">
         {stories.map((s, i) => (
           <motion.figure
@@ -706,7 +697,7 @@ function FAQ() {
 
   return (
     <section id="faq" className="relative py-24 sm:py-32">
-      <SectionHeader eyebrow="FAQ" title="Frequently Asked Questions" subtitle="Everything you need to know about the SS Pathways referral program." />
+      <SectionHeader title="Frequently Asked Questions" subtitle="Everything you need to know about the SS Pathways referral program." />
       <div className="mx-auto mt-12 max-w-3xl px-6">
         <div className="space-y-3">
           {items.map((it, i) => {
